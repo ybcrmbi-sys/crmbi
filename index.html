@@ -1,13 +1,1252 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YBTOUR Business Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=DM+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --yellow: #FFCA28; --yd: #F5A800; --yl: #FFF8E1; --yll: #FFFDE7;
+  --dark: #1A1A1A; --gray: #5A5A5A; --gray2: #999; --border: #E8E8E8;
+  --bg: #F7F7F7; --white: #FFFFFF; --radius: 12px;
+  --shadow: 0 2px 12px rgba(0,0,0,0.06); --shadow-hover: 0 8px 28px rgba(245,168,0,0.16);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh;}
+
+/* ── HEADER ── */
+header{background:var(--white);border-bottom:2.5px solid var(--yellow);padding:0 36px;height:66px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 16px rgba(255,202,40,0.1);}
+.logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
+.logo-img{height:38px;width:auto;object-fit:contain;}
+.logo-fallback{height:38px;display:flex;align-items:center;}
+.logo-pin{width:34px;height:34px;background:var(--yellow);border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;}
+.logo-pin::after{content:'';width:12px;height:12px;background:white;border-radius:50%;display:block;}
+.logo-text{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.5px;line-height:1.25;}
+.logo-text .sub{font-size:9px;font-weight:500;color:var(--gray2);letter-spacing:1.5px;display:block;}
+.logo-text .main{color:var(--dark);}
+.logo-text .accent{color:var(--yd);}
+.admin-badge{background:var(--dark);color:var(--yellow);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:2px;}
+.header-right{display:flex;align-items:center;gap:8px;}
+.saving-msg{font-size:12px;color:var(--gray2);}
+.btn{border:none;border-radius:8px;padding:8px 15px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .18s;white-space:nowrap;}
+.btn-yellow{background:var(--yellow);color:var(--dark);}
+.btn-yellow:hover{background:var(--yd);}
+.btn-gray{background:#F0F0F0;color:var(--gray);}
+.btn-gray:hover{background:#E0E0E0;}
+.btn-sm{padding:6px 12px;font-size:11.5px;}
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+  // 1단계에서 복사한 정보를 입력하세요
+  const SUPABASE_URL = 'https://yoeblixtkvnuuugzvnbi.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_EHfz1gWvuxQm0NW_EJe1-w_P7rv_RJ8';
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // 예: 관리자 로그인 함수
+  async function adminLogin(email, password) {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) alert("로그인 실패!");
+    else alert("관리자 환영합니다!");
+  }
+
+  // 예: 통계 데이터 저장 함수
+  async function saveStat(pageName) {
+    await supabase.from('stats').insert([{ dashboard_name: pageName, created_at: new Date() }]);
+  }
+</script>
+
+
+
+/* ── 공지 배너 ── */
+.notice-bar{background:var(--dark);color:var(--white);padding:10px 36px;display:flex;align-items:center;gap:10px;font-size:13px;}
+.notice-bar .notice-label{background:var(--yellow);color:var(--dark);font-size:10px;font-weight:800;padding:2px 8px;border-radius:4px;flex-shrink:0;}
+.notice-bar .notice-text{flex:1;}
+.notice-bar .notice-close{background:none;border:none;color:#999;cursor:pointer;font-size:16px;padding:0 4px;}
+
+/* ── MAIN ── */
+main{max-width:1240px;margin:0 auto;padding:32px 36px 80px;}
+
+/* ── 웰컴 배너 ── */
+.banner{background:linear-gradient(130deg,var(--yellow) 0%,var(--yd) 100%);border-radius:18px;padding:26px 36px;margin-bottom:32px;display:flex;align-items:center;justify-content:space-between;overflow:hidden;position:relative;}
+.banner::before{content:'';position:absolute;right:-30px;top:-50px;width:200px;height:200px;background:rgba(255,255,255,0.12);border-radius:50%;}
+.banner::after{content:'';position:absolute;right:100px;bottom:-60px;width:140px;height:140px;background:rgba(255,255,255,0.07);border-radius:50%;}
+.banner-left h2{font-size:19px;font-weight:700;color:var(--dark);margin-bottom:4px;}
+.banner-left p{font-size:13px;color:rgba(26,26,26,0.62);}
+.banner-btns{display:flex;gap:8px;position:relative;z-index:1;flex-wrap:wrap;flex-shrink:0;}
+.banner-btn{background:rgba(255,255,255,0.88);border:none;border-radius:8px;padding:9px 14px;font-size:12px;font-weight:600;color:var(--dark);cursor:pointer;font-family:inherit;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
+.banner-btn:hover{background:white;transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,0.1);}
+.banner-btn-edit{background:rgba(0,0,0,0.15);color:var(--dark);font-size:10px;padding:4px 8px;}
+
+/* ── 검색 ── */
+.search-wrap{position:relative;margin-bottom:22px;}
+.search-input{width:100%;padding:12px 16px 12px 44px;border:1.5px solid var(--border);border-radius:12px;font-family:inherit;font-size:14px;background:var(--white);outline:none;transition:border-color .2s;box-shadow:var(--shadow);}
+.search-input:focus{border-color:var(--yellow);}
+.search-icon{position:absolute;left:15px;top:50%;transform:translateY(-50%);font-size:17px;color:var(--gray2);}
+.search-clear{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--gray2);font-size:18px;display:none;}
+
+/* ── 필터 탭 ── */
+.filter-tabs{display:flex;gap:6px;margin-bottom:6px;}
+.filter-tab{padding:7px 16px;border-radius:8px;font-size:12.5px;font-weight:600;border:none;background:transparent;color:var(--gray2);cursor:pointer;font-family:inherit;transition:all .2s;border-bottom:2px solid transparent;}
+.filter-tab.active{color:var(--dark);border-bottom-color:var(--yd);}
+.filter-bar{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;padding:10px 0;}
+.filter-chip{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:500;border:1.5px solid var(--border);background:var(--white);color:var(--gray);cursor:pointer;transition:all .2s;font-family:inherit;}
+.filter-chip.active{border-color:var(--yd);background:var(--yl);color:var(--yd);}
+
+/* ── 섹션 ── */
+.section-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.section-title{font-size:16px;font-weight:700;}
+.section-badge{background:var(--yl);color:var(--yd);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;}
+
+/* ── 관리자 안내 ── */
+.admin-notice{background:var(--yl);border:1px solid var(--yellow);border-radius:10px;padding:10px 16px;margin-bottom:16px;font-size:12.5px;color:#7A5000;}
+
+/* ── 즐겨찾기 섹션 ── */
+.fav-section{margin-bottom:28px;}
+.fav-section .section-title{color:var(--yd);}
+
+/* ── 최근 방문 ── */
+.recent-bar{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;align-items:center;}
+.recent-label{font-size:11.5px;color:var(--gray2);font-weight:600;flex-shrink:0;}
+.recent-chip{background:var(--white);border:1.5px solid var(--border);border-radius:20px;padding:4px 12px;font-size:11.5px;color:var(--dark);cursor:pointer;transition:all .2s;font-family:inherit;}
+.recent-chip:hover{border-color:var(--yellow);background:var(--yl);}
+
+/* ── 카드 그리드 ── */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;}
+.card{background:var(--white);border-radius:var(--radius);border:1.5px solid var(--border);transition:all .22s ease;position:relative;overflow:hidden;cursor:pointer;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--yellow);opacity:0;transition:opacity .2s;}
+.card:hover{border-color:var(--yellow);box-shadow:var(--shadow-hover);transform:translateY(-3px);}
+.card:hover::before{opacity:1;}
+.card.dragging{opacity:.4;border:2px dashed var(--yd);}
+.card.drag-over{border-color:var(--yd);border-style:dashed;background:var(--yll);}
+.card-thumb{width:100%;height:150px;object-fit:cover;display:block;border-bottom:1px solid var(--border);}
+.card-thumb-placeholder{width:100%;height:6px;background:linear-gradient(90deg,var(--yellow),var(--yd));display:block;}
+.card-body{padding:18px 20px 16px;}
+.card-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;gap:8px;}
+.card-title{font-size:14px;font-weight:700;color:var(--dark);display:flex;align-items:center;gap:6px;flex:1;line-height:1.4;}
+.drag-handle{cursor:grab;color:#CCC;font-size:16px;flex-shrink:0;}
+.card-top-actions{display:flex;align-items:center;gap:5px;flex-shrink:0;}
+.fav-btn{background:none;border:none;cursor:pointer;font-size:18px;padding:2px;transition:transform .2s;}
+.fav-btn:hover{transform:scale(1.2);}
+.card-actions{display:flex;gap:5px;}
+.card-action-btn{border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;}
+.goto-btn{background:var(--yl);color:var(--yd);font-size:11.5px;font-weight:600;padding:5px 12px;border-radius:6px;text-decoration:none;border:1px solid rgba(245,168,0,.2);white-space:nowrap;transition:all .2s;display:inline-block;}
+.goto-btn:hover{background:var(--yellow);color:var(--dark);}
+.card-desc{font-size:12.5px;color:var(--gray);line-height:1.6;margin-bottom:10px;}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:7px;}
+.tag{font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px;}
+.kpi-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:7px;}
+.kpi-tag{font-size:10.5px;padding:2px 8px;border-radius:4px;background:#F5F5F5;color:var(--gray);font-weight:500;}
+.card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:8px;}
+.card-team{font-size:11px;color:#AAA;}
+.new-badge{background:#E53935;color:white;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:10px;}
+
+/* ── 미리보기 모달 ── */
+.preview-modal{max-width:700px;width:95vw;}
+.preview-img{width:100%;border-radius:10px;margin-bottom:16px;border:1px solid var(--border);}
+.preview-img-placeholder{width:100%;height:300px;background:linear-gradient(135deg,#F5F5F5,#EBEBEB);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:60px;margin-bottom:16px;border:1px solid var(--border);}
+
+/* ── 모달 공통 ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;}
+.modal{background:var(--white);border-radius:18px;padding:28px;width:440px;max-width:100%;position:relative;max-height:88vh;overflow-y:auto;}
+.modal-wide{width:520px;}
+.modal-close{position:absolute;top:14px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:#999;}
+.modal-title{font-size:18px;font-weight:700;margin-bottom:18px;}
+.modal-sub{font-size:13px;color:var(--gray);margin-bottom:18px;margin-top:-12px;}
+
+/* ── 폼 ── */
+.form-group{margin-bottom:13px;}
+.form-label{font-size:12px;font-weight:600;color:#555;margin-bottom:5px;display:block;}
+.form-input,.form-textarea,.form-select{font-family:inherit;font-size:13px;border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;width:100%;outline:none;transition:border-color .2s;}
+.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--yellow);}
+.form-textarea{resize:vertical;min-height:68px;}
+.form-hint{font-size:11px;color:#AAA;margin-top:3px;}
+.form-row{display:flex;gap:8px;}
+.form-check{display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;}
+.form-actions{display:flex;gap:8px;margin-top:20px;}
+.form-upload{border:2px dashed var(--border);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:border-color .2s;font-size:13px;color:var(--gray2);}
+.form-upload:hover{border-color:var(--yellow);}
+.upload-preview{width:100%;max-height:160px;object-fit:cover;border-radius:8px;margin-top:10px;}
+.error-msg{color:#E53935;font-size:12px;margin-top:6px;}
+.loading{display:flex;align-items:center;justify-content:center;height:100vh;font-size:16px;color:var(--gray);}
+
+
+
+/* ── 표시 설정 모달 ── */
+.display-setting-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--border);}
+.display-setting-row:last-child{border-bottom:none;}
+.display-setting-label{font-size:13.5px;font-weight:500;display:flex;align-items:center;gap:8px;}
+.display-setting-desc{font-size:11px;color:var(--gray2);margin-top:2px;}
+.toggle-switch{position:relative;width:44px;height:24px;flex-shrink:0;}
+.toggle-switch input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;inset:0;background:#DDD;border-radius:24px;cursor:pointer;transition:.3s;}
+.toggle-slider:before{content:"";position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.3s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+input:checked+.toggle-slider{background:var(--yd);}
+input:checked+.toggle-slider:before{transform:translateX(20px);}
+
+/* ── 검색 자동완성 ── */
+.autocomplete-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--white);border:1.5px solid var(--yellow);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.1);z-index:500;max-height:260px;overflow-y:auto;}
+.autocomplete-item{padding:9px 16px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:background .15s;}
+.autocomplete-item:hover,.autocomplete-item.active{background:var(--yl);}
+.autocomplete-item .ac-type{font-size:10px;color:var(--gray2);background:#F0F0F0;padding:1px 6px;border-radius:10px;flex-shrink:0;}
+.autocomplete-item .ac-match{color:var(--yd);font-weight:700;}
+
+/* ── 뷰 토글 ── */
+.view-toggle{display:flex;gap:4px;background:#F0F0F0;border-radius:8px;padding:3px;}
+.view-btn{background:none;border:none;border-radius:6px;padding:5px 10px;cursor:pointer;font-size:15px;transition:all .15s;color:var(--gray2);}
+.view-btn.active{background:var(--white);color:var(--dark);box-shadow:0 1px 4px rgba(0,0,0,.1);}
+
+/* ── 리스트 뷰 ── */
+.list-view{display:flex;flex-direction:column;gap:8px;}
+.list-card{background:var(--white);border-radius:10px;border:1.5px solid var(--border);padding:14px 20px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden;}
+.list-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--yellow);opacity:0;transition:opacity .2s;}
+.list-card:hover{border-color:var(--yellow);box-shadow:0 4px 16px rgba(245,168,0,.12);transform:translateX(3px);}
+.list-card:hover::before{opacity:1;}
+.list-card-icon{font-size:22px;flex-shrink:0;width:36px;text-align:center;}
+.list-card-main{flex:1;min-width:0;}
+.list-card-title{font-size:13.5px;font-weight:700;color:var(--dark);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.list-card-desc{font-size:12px;color:var(--gray);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.list-card-meta{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.list-card-stats{font-size:11px;color:var(--gray2);display:flex;align-items:center;gap:4px;}
+.list-card-tags{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;max-width:200px;}
+.list-card-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+
+/* ── 방문 통계 배지 ── */
+.visit-badge{font-size:10.5px;color:var(--gray2);display:flex;align-items:center;gap:3px;}
+.visit-bar{height:3px;border-radius:2px;background:var(--yellow);margin-top:4px;transition:width .4s;}
+
+/* ── 상태 배지 ── */
+.status-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;white-space:nowrap;}
+.status-normal{background:#E8F5E9;color:#2E7D32;}
+.status-maintenance{background:#FFF3E0;color:#E65100;}
+.status-updating{background:#E3F2FD;color:#1565C0;}
+.status-error{background:#FFEBEE;color:#C62828;}
+
+/* ── 방문 통계 모달 ── */
+.stat-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.stat-row:last-child{border-bottom:none;}
+.stat-rank{font-size:13px;font-weight:700;color:var(--gray2);width:20px;flex-shrink:0;}
+.stat-name{font-size:13px;flex:1;font-weight:500;}
+.stat-bar-wrap{width:120px;height:6px;background:#F0F0F0;border-radius:3px;overflow:hidden;flex-shrink:0;}
+.stat-bar{height:100%;background:var(--yellow);border-radius:3px;}
+.stat-count{font-size:12px;color:var(--gray2);width:40px;text-align:right;flex-shrink:0;}
+
+/* ── 태그 자동완성 (폼 내) ── */
+.tag-input-wrap{position:relative;}
+.tag-autocomplete{position:absolute;top:calc(100% + 2px);left:0;right:0;background:var(--white);border:1.5px solid var(--yellow);border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.09);z-index:600;max-height:180px;overflow-y:auto;}
+.tag-ac-item{padding:7px 12px;font-size:12.5px;cursor:pointer;transition:background .12s;}
+.tag-ac-item:hover{background:var(--yl);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.card{animation:fadeUp .35s ease both;}
+
+@media(max-width:768px){
+  main{padding:20px 16px 60px;}
+  header{padding:0 16px;}
+  .banner{flex-direction:column;gap:16px;}
+  .banner-btns{flex-wrap:wrap;}
+  .card-grid{grid-template-columns:1fr;}
+  .notice-bar{padding:10px 16px;}
+}
+</style>
 </head>
 <body>
-    <h1>Welcome to my website</h1>
-    <p>This is a sample HTML file.</p>
-    <p>Current Date and Time (UTC): 2026-03-04 05:33:57</p>
+<div id="app"><div class="loading">⏳ 불러오는 중...</div></div>
+
+<script>
+// ══════════════════════════════════════════════
+// ★ 설정 (여기만 수정하면 돼요!)
+// ══════════════════════════════════════════════
+const ADMIN_PASSWORD = "ybtour2025"; // ← 비밀번호
+
+const DEFAULT_CARDS = [
+  { id:1, icon:"📋", title:"일일 예약 현황 대시보드", url:"#", desc:"전일 기준 예약/취소/목표/동시점 예약", categories:["예약"], kpis:["예약인원","취소인원","판매금액","리드타임"], team:"CRM/BI팀", star:false, thumb:"", isNew:false, hidden:false },
+  { id:2, icon:"🎯", title:"일별 기대 예약 대시보드", url:"#", desc:"2025년 모객 목표 달성을 위한 영업일자 기준 출발일 조직·채널별 유입 기대 수치", categories:["예약"], kpis:["예약인원"], team:"CRM/BI팀", star:false, thumb:"", isNew:true, hidden:false },
+  { id:3, icon:"🔆", title:"상품본부 대시보드", url:"#", desc:"본부/사업부/팀 단위 전체 유입~운영~정산 현황 당일 모객 및 가예약 반영", categories:["예약","정산/실적","상품운영"], kpis:["예약인원","판매금액","잔여석","정산인원","정산수익","수익률"], team:"CRM/BI팀", star:true, thumb:"", isNew:false, hidden:false },
+  { id:4, icon:"⏱", title:"예약 리드타임 대시보드", url:"#", desc:"지역/채널/항공별 예약 리드타임", categories:["예약"], kpis:["리드타임"], team:"CRM/BI팀", star:false, thumb:"", isNew:false, hidden:false },
+  { id:5, icon:"💰", title:"정산 현황 대시보드", url:"#", desc:"정산 현황 (예상 수익 및 주간보고 추이)", categories:["정산/실적"], kpis:["정산인원","판매금액","정산수익","수익률","리드타임"], team:"CRM/BI팀", star:false, thumb:"", isNew:false, hidden:false },
+  { id:6, icon:"📈", title:"이익 성과 대시보드", url:"#", desc:"각 조직별 분기 이익성과 지표", categories:["정산/실적"], kpis:["실적","비용"], team:"CRM/BI팀", star:false, thumb:"", isNew:false, hidden:false },
+  { id:7, icon:"🏢", title:"랜드사 현황 대시보드", url:"#", desc:"랜드사별 현황 분석", categories:["정산/실적","상품운영"], kpis:["예약인원","지상비","행사코드수","만족도점수"], team:"CRM/BI팀", star:false, thumb:"", isNew:false, hidden:false },
+  { id:8, icon:"✈", title:"전세기 좌석 소진 현황 대시보드", url:"#", desc:"전사 항공 계약 현황 및 부진 날짜 확인", categories:["상품운영"], kpis:["공급석","소진율","잔여석","패널티","매핑률","수익률","리드타임"], team:"CRM/BI팀", star:false, thumb:"", isNew:false, hidden:false },
+  { id:9, icon:"🛒", title:"상품 세팅 현황 대시보드", url:"#", desc:"부서/노선/상품코드별 상품 세팅 현황", categories:["상품운영"], kpis:["행사코드수","상품코드수","리드타임","예약인원"], team:"CRM/BI팀", star:false, thumb:"", isNew:false, hidden:false },
+  { id:10, icon:"🛍", title:"홈쇼핑 현황 대시보드", url:"#", desc:"부서별 홈쇼핑 유입 및 정산", categories:["판매채널"], kpis:["예약인원","리드타임","방송수","비용금액","지원금액","자사부담금액"], team:"CRM/BI팀", star:false, thumb:"", isNew:false, hidden:false },
+  { id:11, icon:"📺", title:"제휴채널별 실적 현황 대시보드", url:"#", desc:"제휴채널별 유입 및 정산", categories:["판매채널"], kpis:["예약인원","판매금액","정산수익","수익률","리드타임"], team:"CRM/BI팀", star:false, thumb:"", isNew:false, hidden:false },
+  { id:12, icon:"📞", title:"콜데이터 분석 대시보드", url:"#", desc:"IB&OB 전판 유입 및 전환율", categories:["판매채널"], kpis:["전환율","IB응답호수","IB응답률","OB통화호수","콜 분배 비중","블랙"], team:"CRM/BI팀", star:false, thumb:"", isNew:false, hidden:false },
+  { id:13, icon:"👥", title:"노랑풍선 회원 현황 대시보드", url:"#", desc:"전체 회원/신규 회원/마케팅 수신 동의 회원", categories:["CRM"], kpis:["회원"], team:"CRM/BI팀", star:false, thumb:"", isNew:false, hidden:false },
+  { id:14, icon:"🎒", title:"패키지 여행자 고객 분석 대시보드 (1)", url:"#", desc:"패키지 여행자 시별/회원파/재이용 현황", categories:["CRM"], kpis:["회원","여행자"], team:"CRM/BI팀", star:false, thumb:"", isNew:false, hidden:false },
+  { id:15, icon:"🗺", title:"패키지 여행자 고객 분석 대시보드 (2)", url:"#", desc:"패키지 전 지역 X 전 채널 여행자 고객 특성", categories:["CRM"], kpis:["여행자"], team:"CRM/BI팀", star:false, thumb:"", isNew:false, hidden:false },
+  { id:16, icon:"👨‍👩‍👧", title:"패키지 여행자 동반인 유형 현황 대시보드", url:"#", desc:"패키지 동반인 유형", categories:["CRM"], kpis:["회원","여행자"], team:"CRM/BI팀", star:false, thumb:"", isNew:false, hidden:false },
+  { id:17, icon:"🎁", title:"포인트 현황 대시보드", url:"#", desc:"포인트 적립/사용/소멸/잔여", categories:["CRM"], kpis:["포인트"], team:"CRM/BI팀", star:false, thumb:"", isNew:false, hidden:false },
+  { id:18, icon:"📧", title:"CRM 캠페인 퍼포먼스 현황 대시보드", url:"#", desc:"앱푸시 / EDM 퍼포먼스 (팀별, 상세)", categories:["CRM"], kpis:["CRM캠페인","앱푸시","EDM"], team:"CRM/BI팀", star:false, thumb:"", isNew:false, hidden:false },
+  { id:19, icon:"⭐", title:"상품품질평가 대시보드", url:"#", desc:"부서별 상품품질평가 점수", categories:["CS"], kpis:["만족도점수"], team:"CRM/BI팀", star:true, thumb:"", isNew:false, hidden:false },
+  { id:20, icon:"😊", title:"여행중 만족조사 대시보드", url:"#", desc:"부서/지역/랜드사별 여행중만족도", categories:["CS"], kpis:["만족도점수","처리율"], team:"CRM/BI팀", star:false, thumb:"", isNew:false, hidden:false },
+  { id:21, icon:"📝", title:"고객 만족도 평가 대시보드", url:"#", desc:"부서/지역/랜드사별 고객만족도", categories:["CS"], kpis:["만족도점수"], team:"CRM/BI팀", star:false, thumb:"", isNew:false, hidden:false },
+  { id:22, icon:"💬", title:"1:1 고객 문의 및 불만 VOC 대시보드", url:"#", desc:"1:1문의 현황 및 불만 VOC", categories:["CS"], kpis:["처리율","불만율","소요시간"], team:"CRM/BI팀", star:false, thumb:"", isNew:false, hidden:false },
+  { id:23, icon:"🏆", title:"실적 종합 대시보드", url:"#", desc:"상품 유입~운영~관리 영입 전반", categories:["통합"], kpis:["예약인원","취소인원","판매금액","정산인원","정산수익","수익률","M/S","생산성","공급석","소진율","상품코드수","행사코드수","전환율","유입수","IB응답호수","IB응답률","통화시간","콜 분배비중","방송수","비용금액","지원금액","자사부담금액","헤피쿨DB수","만족도점수"], team:"CRM/BI팀", star:true, thumb:"", isNew:false, hidden:false },
+  { id:24, icon:"📦", title:"실적 데이터 추출", url:"#", desc:"RAW 데이터 추출", categories:["예약","정산/실적","항공"], kpis:["판매금액","정산인원","정산수익","예약인원","티켓수"], team:"CRM/BI팀", star:false, thumb:"", isNew:false, hidden:false },
+];
+const DEFAULT_BANNER_BTNS = [
+  { id: 1, label: "📖 이용 방법", url: "#" },
+  { id: 2, label: "🎓 기초 교육 자료", url: "#" },
+  { id: 3, label: "❓ 자주 묻는 질문", url: "#" },
+];
+
+const CAT_COLORS = {
+  "예약":     { bg:"#FFF3E0", text:"#E65100" },
+  "정산/실적": { bg:"#E3F2FD", text:"#1565C0" },
+  "상품운영":  { bg:"#E8F5E9", text:"#2E7D32" },
+  "실적":     { bg:"#F3E5F5", text:"#6A1B9A" },
+  "판매채널":  { bg:"#FCE4EC", text:"#880E4F" },
+  "CRM":      { bg:"#E0F7FA", text:"#006064" },
+  "CS":       { bg:"#FFF9C4", text:"#F57F17" },
+  "통합":     { bg:"#EDE7F6", text:"#4527A0" },
+  "항공":     { bg:"#E8EAF6", text:"#283593" },
+};
+
+// ══════════════════════════════════════════════
+// 상태
+// ══════════════════════════════════════════════
+let S = {
+  cards: DEFAULT_CARDS,
+  bannerBtns: DEFAULT_BANNER_BTNS,
+  notice: { text: "", visible: false },
+  logoUrl: "",
+  isAdmin: false,
+  filterType: "category", // "category" | "kpi"
+  filterVal: "전체",
+  search: "",
+  favorites: [],   // id 배열
+  recent: [],      // id 배열 (최대 5)
+  modal: null,
+  editTarget: null,
+  previewCard: null,
+  pwError: false,
+  dragIdx: null,
+  saving: false,
+  viewMode: "grid",
+  acResults: [],
+  acIdx: -1,
+  displaySettings: {
+    thumb: true,
+    status: true,
+    kpiTags: true,
+    catTags: true,
+    team: true,
+    newBadge: true,
+    visitCount: true,
+    favBtn: true,
+  },
+};
+
+// ══════════════════════════════════════════════
+// localStorage
+// ══════════════════════════════════════════════
+function lsGet(k) { try { const v=localStorage.getItem(k); return v?JSON.parse(v):null; } catch{return null;} }
+function lsSet(k,v) { try { localStorage.setItem(k,JSON.stringify(v)); } catch(e){console.warn(e);} }
+
+function loadAll() {
+  S.cards       = lsGet("yb-cards")    || DEFAULT_CARDS;
+  S.bannerBtns  = lsGet("yb-btns")     || DEFAULT_BANNER_BTNS;
+  S.notice      = lsGet("yb-notice")   || { text:"", visible:false };
+  S.logoUrl     = lsGet("yb-logo")     || "";
+  S.favorites   = lsGet("yb-favs")     || [];
+  S.recent      = lsGet("yb-recent")   || [];
+  S.visits      = lsGet("yb-visits")   || {};
+  S.displaySettings = lsGet("yb-display") || S.displaySettings;
+  render();
+}
+
+async function saveCards() {
+  S.saving=true; render();
+  lsSet("yb-cards", S.cards);
+  S.saving=false; render();
+}
+function saveBtns()   { lsSet("yb-btns", S.bannerBtns); }
+function saveNotice() { lsSet("yb-notice", S.notice); }
+function saveLogo()   { lsSet("yb-logo", S.logoUrl); }
+function saveFavs()   { lsSet("yb-favs", S.favorites); }
+function saveRecent() { lsSet("yb-recent", S.recent); }
+function saveVisits() { lsSet("yb-visits", S.visits); }
+function addBannerVisit(id) {
+  if (!S.visits) S.visits = {};
+  const key = "btn_"+id;
+  S.visits[key] = (S.visits[key]||0) + 1;
+  saveVisits();
+}
+function saveDisplay() { lsSet("yb-display", S.displaySettings); }
+
+// ══════════════════════════════════════════════
+// 유틸
+// ══════════════════════════════════════════════
+function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+function allCategories() {
+  const cats = S.cards.flatMap(c=>c.categories||[]);
+  return ["전체",...Array.from(new Set(cats))];
+}
+function allKpis() {
+  const kpis = S.cards.flatMap(c=>c.kpis||[]);
+  return ["전체",...Array.from(new Set(kpis))];
+}
+function catColor(cat) { return CAT_COLORS[cat]||{bg:"#F5F5F5",text:"#5A5A5A"}; }
+
+function getAcResults(q) {
+  if (!q || q.length < 1) return [];
+  const lq = q.toLowerCase();
+  const results = [];
+  const seen = new Set();
+  // 카드 제목
+  S.cards.forEach(c => {
+    if (c.title.toLowerCase().includes(lq) && !seen.has(c.title)) {
+      seen.add(c.title); results.push({ type:"대시보드", label: c.title, id: c.id });
+    }
+  });
+  // KPI 태그
+  S.cards.flatMap(c=>c.kpis||[]).forEach(k => {
+    if (k.toLowerCase().includes(lq) && !seen.has(k)) {
+      seen.add(k); results.push({ type:"KPI", label: k });
+    }
+  });
+  // 카테고리
+  S.cards.flatMap(c=>c.categories||[]).forEach(cat => {
+    if (cat.toLowerCase().includes(lq) && !seen.has(cat)) {
+      seen.add(cat); results.push({ type:"카테고리", label: cat });
+    }
+  });
+  return results.slice(0, 8);
+}
+
+function getAllTags() {
+  return Array.from(new Set(S.cards.flatMap(c=>c.kpis||[])));
+}
+function getMaxVisits() {
+  const vals = Object.values(S.visits||{});
+  return vals.length ? Math.max(...vals) : 1;
+}
+
+function getFiltered() {
+  let list = S.isAdmin ? [...S.cards] : S.cards.filter(c=>!c.hidden);
+  // 검색
+  if (S.search.trim()) {
+    const q = S.search.trim().toLowerCase();
+    list = list.filter(c =>
+      c.title.toLowerCase().includes(q) ||
+      (c.desc||"").toLowerCase().includes(q) ||
+      (c.kpis||[]).some(k=>k.toLowerCase().includes(q)) ||
+      (c.categories||[]).some(k=>k.toLowerCase().includes(q))
+    );
+  }
+  // 필터
+  if (S.filterVal !== "전체") {
+    if (S.filterType === "category") list = list.filter(c=>(c.categories||[]).includes(S.filterVal));
+    if (S.filterType === "kpi")      list = list.filter(c=>(c.kpis||[]).includes(S.filterVal));
+  }
+  return list;
+}
+function getFavCards() { return S.cards.filter(c=>S.favorites.includes(c.id)); }
+function getRecentCards() { return S.recent.map(id=>S.cards.find(c=>c.id===id)).filter(Boolean); }
+
+function addRecent(id) {
+  S.recent = [id, ...S.recent.filter(x=>x!==id)].slice(0,5);
+  saveRecent();
+  // 방문 카운트
+  if (!S.visits) S.visits = {};
+  S.visits[id] = (S.visits[id]||0) + 1;
+  saveVisits();
+}
+
+// ══════════════════════════════════════════════
+// 렌더
+// ══════════════════════════════════════════════
+function render() { document.getElementById("app").innerHTML = buildApp(); bindEvents(); }
+
+function buildApp() {
+  return buildHeader() + buildNoticeBar() + `<main>` + buildBanner() + buildSearch() + buildRecentBar() + buildFavSection() + buildSection() + `</main>` + buildModal();
+}
+
+// ── 헤더
+function buildHeader() {
+  const logoHtml = S.logoUrl
+    ? `<img src="${esc(S.logoUrl)}" class="logo-img" alt="YBTOUR">`
+    : `<div class="logo-fallback"><div class="logo-pin"></div></div>`;
+  return `
+  <header>
+    <div class="logo">
+      ${logoHtml}
+      <div class="logo-text">
+        <span class="main">YBTOUR <span class="accent">BUSINESS</span></span>
+        <span class="sub">INTELLIGENCE</span>
+      </div>
+      ${S.isAdmin?`<span class="admin-badge">관리자</span>`:""}
+    </div>
+    <div class="header-right">
+      ${S.saving?`<span class="saving-msg">💾 저장 중...</span>`:""}
+      <div class="view-toggle">
+        <button class="view-btn${S.viewMode==="grid"?" active":""}" onclick="setViewMode('grid')" title="그리드 뷰">⊞</button>
+        <button class="view-btn${S.viewMode==="list"?" active":""}" onclick="setViewMode('list')" title="리스트 뷰">☰</button>
+      </div>
+      <button class="btn btn-gray btn-sm" onclick="openModal('stats')">📊 방문 통계</button>
+      ${S.isAdmin
+        ? `<button class="btn btn-gray btn-sm" onclick="openModal('logo')">🖼 로고 변경</button>
+           <button class="btn btn-gray btn-sm" onclick="openModal('notice')">📢 공지</button>
+           <button class="btn btn-yellow btn-sm" onclick="openModal('add')">＋ 카드 추가</button>
+           <button class="btn btn-gray btn-sm" onclick="logout()">로그아웃</button>`
+        : `<button class="btn btn-gray btn-sm" onclick="openModal('login')">관리자</button>`
+      }
+    </div>
+  </header>`;
+}
+
+// ── 공지 배너
+function buildNoticeBar() {
+  if (!S.notice.visible || !S.notice.text) return "";
+  return `
+  <div class="notice-bar">
+    <span class="notice-label">공지</span>
+    <span class="notice-text">${esc(S.notice.text)}</span>
+    <button class="notice-close" onclick="dismissNotice()">✕</button>
+  </div>`;
+}
+
+// ── 웰컴 배너
+function buildBanner() {
+  const btnHtml = S.bannerBtns.map((b,i)=>`
+    <a href="${esc(b.url)}" target="_blank" class="banner-btn" onclick="event.stopPropagation()">
+      ${esc(b.label)}
+    </a>
+    ${S.isAdmin?`<button class="banner-btn banner-btn-edit" onclick="editBannerBtn(${i})" title="링크 편집">✏️</button>`:""}
+  `).join("");
+  const addBtn = S.isAdmin ? `<button class="banner-btn" onclick="addBannerBtn()" style="background:rgba(0,0,0,0.1)">＋ 버튼 추가</button>` : "";
+  return `
+  <div class="banner">
+    <div class="banner-left">
+      <h2>👋 YBTOUR BI 대시보드 네비게이션에 오신 것을 환영합니다!</h2>
+      <p>아래 대시보드를 클릭하면 Tableau로 바로 이동합니다</p>
+    </div>
+    <div class="banner-btns">${btnHtml}${addBtn}</div>
+  </div>`;
+}
+
+// ── 검색
+function buildSearch() {
+  const acHtml = S.acResults.length && S.search ? `
+    <div class="autocomplete-dropdown" id="acDropdown">
+      ${S.acResults.map((r,i)=>`
+        <div class="autocomplete-item${S.acIdx===i?" active":""}" onclick="selectAc(${i})">
+          <span>${highlightMatch(esc(r.label), esc(S.search))}</span>
+          <span class="ac-type">${r.type}</span>
+        </div>`).join("")}
+    </div>` : "";
+  return `
+  <div class="search-wrap" style="z-index:400">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" id="searchInput" placeholder="대시보드명, KPI, 카테고리로 검색..." value="${esc(S.search)}">
+    <button class="search-clear" id="searchClear" onclick="clearSearch()" style="display:${S.search?'block':'none'}">✕</button>
+    ${acHtml}
+  </div>`;
+}
+
+function highlightMatch(text, q) {
+  if (!q) return text;
+  try {
+    return text.replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')', 'gi'), '<span class="ac-match">$1</span>');
+  } catch { return text; }
+}
+
+// ── 최근 방문
+function buildRecentBar() {
+  const rc = getRecentCards();
+  if (!rc.length) return "";
+  const chips = rc.map(c=>`<button class="recent-chip" onclick="openPreview(${c.id})">${esc(c.title)}</button>`).join("");
+  return `<div class="recent-bar"><span class="recent-label">🕐 최근 방문</span>${chips}</div>`;
+}
+
+// ── 즐겨찾기 섹션
+function buildFavSection() {
+  const favs = getFavCards();
+  if (!favs.length) return "";
+  return `
+  <div class="fav-section">
+    <div class="section-header">
+      <span class="section-title">⭐ 즐겨찾기</span>
+      <span class="section-badge">${favs.length}개</span>
+    </div>
+    <div class="card-grid">${favs.map((c,i)=>buildCard(c,i,true)).join("")}</div>
+  </div>`;
+}
+
+// ── 메인 섹션
+function buildSection() {
+  const filtered = getFiltered();
+  const filterTypeLabel = S.filterType === "category" ? "업무구분" : "지표별 (KPI)";
+  const chips = (S.filterType==="category" ? allCategories() : allKpis())
+    .map(v=>`<button class="filter-chip${S.filterVal===v?" active":""}" onclick="setFilter('${esc(v)}')">${esc(v)}</button>`)
+    .join("");
+
+  const gridHtml = S.viewMode === "list"
+    ? `<div class="list-view" id="mainCardGrid">${filtered.map((c,i)=>buildListCard(c,i)).join("")}</div>`
+    : `<div class="card-grid" id="mainCardGrid">${filtered.map((c,i)=>buildCard(c,i,false)).join("")}</div>`;
+
+  return `
+  <div class="section-header">
+    <span class="section-title">[L2] 시각화 대시보드 네비게이션</span>
+    <span class="section-badge" id="mainBadge">${filtered.length}개</span>
+  </div>
+  <div class="filter-tabs">
+    <button class="filter-tab${S.filterType==="category"?" active":""}" onclick="setFilterType('category')">업무구분</button>
+    <button class="filter-tab${S.filterType==="kpi"?" active":""}" onclick="setFilterType('kpi')">지표별 KPI</button>
+  </div>
+  <div class="filter-bar">${chips}</div>
+  ${S.isAdmin?`<div class="admin-notice">✏️ <strong>관리자 모드</strong> — 드래그로 순서 변경, 카드 우측 버튼으로 수정/삭제 가능해요.</div>`:""}
+  ${gridHtml}
+  <div id="noResult" style="text-align:center;padding:60px;color:var(--gray2);font-size:15px;display:${filtered.length===0?"block":"none"}">🔍 검색 결과가 없어요</div>`;
+}
+
+// ── 카드
+function buildCard(card, i, isFavSection) {
+  const isFav = S.favorites.includes(card.id);
+  const tagHtml = (card.categories||[]).map(cat=>{
+    const c=catColor(cat);
+    return `<span class="tag" style="background:${c.bg};color:${c.text}">${esc(cat)}</span>`;
+  }).join("");
+  const kpiHtml = (card.kpis||[]).map(k=>`<span class="kpi-tag">${esc(k)}</span>`).join("");
+  const statusMap = { normal:"✅ 정상", maintenance:"🔧 점검중", updating:"🔄 업데이트중", error:"❌ 오류" };
+  const statusClass = { normal:"status-normal", maintenance:"status-maintenance", updating:"status-updating", error:"status-error" };
+  const st = card.status||"normal";
+  const statusHtml = `<span class="status-badge ${statusClass[st]}">${statusMap[st]||"✅ 정상"}</span>`;
+  const visitCnt = (S.visits||{})[card.id]||0;
+  const visitHtml = visitCnt>0?`<span class="visit-badge">👁 ${visitCnt}회</span>`:"";
+
+  const DS = S.displaySettings;
+  const thumbHtml = DS.thumb
+    ? (card.thumb ? `<img class="card-thumb" src="${esc(card.thumb)}" alt="썸네일" onerror="this.style.display='none'">` : `<div class="card-thumb-placeholder"></div>`)
+    : "";
+
+  const adminActions = S.isAdmin
+    ? `<div class="card-actions">
+        <button class="card-action-btn" style="background:${card.hidden?'#E8F5E9':'#F3E5F5'};color:${card.hidden?'#2E7D32':'#6A1B9A'}" onclick="event.stopPropagation();toggleHidden(${card.id})" title="${card.hidden?'표시':'숨기기'}">${card.hidden?'👁 표시':'🙈 숨김'}</button>
+        <button class="card-action-btn" style="background:#FFF8E1;color:#F5A800" onclick="event.stopPropagation();openModal('edit',${card.id})">수정</button>
+        <button class="card-action-btn" style="background:#FFEBEE;color:#C62828" onclick="event.stopPropagation();deleteCard(${card.id})">삭제</button>
+       </div>`
+    : `<a href="${esc(card.url)}" target="_blank" class="goto-btn" onclick="event.stopPropagation();addRecent(${card.id})">바로가기 →</a>`;
+
+  return `
+  <div class="card" id="card-${card.id}"
+    data-idx="${i}" draggable="${S.isAdmin}"
+    ondragstart="onDragStart(event,${i})"
+    ondragover="onDragOver(event,${i})"
+    ondrop="onDrop(event,${i})"
+    ondragleave="onDragLeave(event)"
+    onclick="openPreview(${card.id})" style="animation-delay:${i*0.04}s;${card.hidden&&S.isAdmin?"opacity:0.5;border-style:dashed":""}"
+>
+    ${card.hidden&&S.isAdmin?'<div style="position:absolute;top:8px;left:8px;background:#6A1B9A;color:white;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;z-index:1">숨김</div>':""}${thumbHtml}
+    <div class="card-body">
+      <div class="card-header">
+        <div class="card-title">
+          ${S.isAdmin?`<span class="drag-handle">⠿</span>`:""}
+          <span>${card.star?"⭐ ":""}${esc(card.title)}</span>
+        </div>
+        <div class="card-top-actions">
+          ${DS.newBadge && card.isNew?`<span class="new-badge">NEW</span>`:""}
+          ${DS.favBtn?`<button class="fav-btn" onclick="event.stopPropagation();toggleFav(${card.id})" title="즐겨찾기">${isFav?"⭐":"☆"}</button>`:""}
+          ${adminActions}
+        </div>
+      </div>
+      <div class="card-desc">${esc(card.desc)}</div>
+      ${DS.catTags?`<div class="tags">${tagHtml}</div>`:""}
+      ${DS.kpiTags?`<div class="kpi-tags">${kpiHtml}</div>`:""}
+      <div class="card-footer" style="flex-wrap:wrap;gap:6px;">
+        ${DS.team?`<span class="card-team">👥 ${esc(card.team)}</span>`:""}
+        ${DS.status?statusHtml:""}
+        ${DS.visitCount?visitHtml:""}
+      </div>
+    </div>
+  </div>`;
+}
+
+
+// ── 리스트 카드
+function buildListCard(card, i) {
+  const isFav = S.favorites.includes(card.id);
+  const statusMap = { normal:"✅ 정상", maintenance:"🔧 점검중", updating:"🔄 업데이트중", error:"❌ 오류" };
+  const statusClass = { normal:"status-normal", maintenance:"status-maintenance", updating:"status-updating", error:"status-error" };
+  const st = card.status||"normal";
+  const visitCnt = (S.visits||{})[card.id]||0;
+  const DS2 = S.displaySettings;
+  const tagHtml = (card.categories||[]).map(cat=>{
+    const c=catColor(cat);
+    return `<span class="tag" style="background:${c.bg};color:${c.text};font-size:10px;padding:2px 7px">${esc(cat)}</span>`;
+  }).join("");
+  const adminHtml = S.isAdmin
+    ? `<button class="card-action-btn" style="background:#FFF8E1;color:#F5A800" onclick="event.stopPropagation();openModal('edit',${card.id})">수정</button>
+       <button class="card-action-btn" style="background:${card.hidden?'#E8F5E9':'#F3E5F5'};color:${card.hidden?'#2E7D32':'#6A1B9A'}" onclick="event.stopPropagation();toggleHidden(${card.id})">${card.hidden?'👁':'🙈'}</button>`
+    : `<a href="${esc(card.url)}" target="_blank" class="goto-btn" onclick="event.stopPropagation();addRecent(${card.id})">→</a>`;
+
+  return `
+  <div class="list-card${card.hidden&&S.isAdmin?" dragging":""}" onclick="openPreview(${card.id})" style="animation-delay:${i*0.03}s">
+    <div class="list-card-icon">${card.icon||"📊"}</div>
+    <div class="list-card-main">
+      <div class="list-card-title">${card.star?"⭐ ":""}${esc(card.title)}${card.isNew?` <span class="new-badge">NEW</span>`:""}</div>
+      <div class="list-card-desc">${esc(card.desc)}</div>
+    </div>
+    ${DS2.catTags?`<div class="list-card-tags">${tagHtml}</div>`:""}
+    <div class="list-card-meta">
+      ${DS2.status?`<span class="status-badge ${statusClass[st]}">${statusMap[st]}</span>`:""}
+      ${DS2.visitCount&&visitCnt>0?`<span class="visit-badge">👁 ${visitCnt}</span>`:""}
+      ${DS2.favBtn?`<button class="fav-btn" onclick="event.stopPropagation();toggleFav(${card.id})">${isFav?"⭐":"☆"}</button>`:""}
+      ${adminHtml}
+    </div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════════
+// 모달
+// ══════════════════════════════════════════════
+function buildModal() {
+  if (!S.modal) return "";
+  let inner = "";
+
+  // ── 로그인
+  if (S.modal === "login") {
+    inner = `
+      <div class="modal-title">🔐 관리자 로그인</div>
+      <p class="modal-sub">비밀번호를 입력하세요</p>
+      <div class="form-group">
+        <input id="pw-input" class="form-input" type="password" placeholder="비밀번호"
+          onkeydown="if(event.key==='Enter')doLogin()"
+          style="${S.pwError?'border-color:#E53935':''}">
+        ${S.pwError?`<div class="error-msg">비밀번호가 올바르지 않아요</div>`:""}
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-yellow" style="flex:1" onclick="doLogin()">로그인</button>
+      </div>`;
+  }
+
+  // ── 미리보기
+  if (S.modal === "preview" && S.previewCard) {
+    const c = S.previewCard;
+    const tagHtml = (c.categories||[]).map(cat=>{const cl=catColor(cat);return `<span class="tag" style="background:${cl.bg};color:${cl.text};margin-right:4px">${esc(cat)}</span>`;}).join("");
+    const kpiHtml = (c.kpis||[]).map(k=>`<span class="kpi-tag" style="margin-right:4px">${esc(k)}</span>`).join("");
+    const imgHtml = c.thumb
+      ? `<img class="preview-img" src="${esc(c.thumb)}" alt="미리보기">`
+      : `<div class="preview-img-placeholder">${c.icon||"📊"}</div>`;
+    inner = `
+      <div class="modal-title">${c.icon} ${esc(c.title)} ${c.isNew?`<span class="new-badge">NEW</span>`:""}</div>
+      ${imgHtml}
+      <p style="font-size:13.5px;color:var(--gray);line-height:1.7;margin-bottom:14px">${esc(c.desc)}</p>
+      <div style="margin-bottom:10px">${tagHtml}</div>
+      <div style="margin-bottom:16px">${kpiHtml}</div>
+      <div style="font-size:12px;color:var(--gray2);margin-bottom:18px">👥 ${esc(c.team)}</div>
+      <div class="form-actions">
+        <a href="${esc(c.url)}" target="_blank" class="btn btn-yellow" style="flex:1;text-align:center;text-decoration:none" onclick="addRecent(${c.id})">🚀 대시보드 열기</a>
+        <button class="btn btn-gray" style="flex:1" onclick="closeModal()">닫기</button>
+      </div>`;
+  }
+
+  // ── 카드 추가/수정
+  if (S.modal === "add" || S.modal === "edit") {
+    const isEdit = S.modal === "edit";
+    const c = isEdit ? S.editTarget : { icon:"📊",title:"",url:"",desc:"",categories:"예약",kpis:"",team:"CRM/BI팀",star:false,thumb:"",isNew:false };
+    const catsStr = isEdit ? (c.categories||[]).join(", ") : c.categories;
+    const kpisStr = isEdit ? (c.kpis||[]).join(", ") : c.kpis;
+    inner = `
+      <div class="modal-title">${isEdit?"✏️ 카드 수정":"➕ 새 카드 추가"}</div>
+      <div class="form-row">
+        <div class="form-group" style="width:80px;flex-shrink:0">
+          <label class="form-label">아이콘</label>
+          <input id="f-icon" class="form-input" value="${esc(c.icon)}" placeholder="📊">
+        </div>
+        <div class="form-group" style="flex:1">
+          <label class="form-label">대시보드명 *</label>
+          <input id="f-title" class="form-input" value="${esc(c.title)}" placeholder="예: 월별 실적 대시보드">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tableau URL *</label>
+        <input id="f-url" class="form-input" value="${esc(c.url)}" placeholder="https://...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">설명</label>
+        <textarea id="f-desc" class="form-textarea" placeholder="대시보드 설명">${esc(c.desc)}</textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="flex:1">
+          <label class="form-label">카테고리</label>
+          <input id="f-cats" class="form-input" value="${esc(catsStr)}" placeholder="예약, 정산/실적">
+          <div class="form-hint">쉼표로 구분</div>
+        </div>
+        <div class="form-group" style="flex:1">
+          <label class="form-label">담당팀</label>
+          <input id="f-team" class="form-input" value="${esc(c.team)}" placeholder="CRM/BI팀">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">KPI 태그</label>
+        <input id="f-kpis" class="form-input" value="${esc(kpisStr)}" placeholder="예약인원, 판매금액">
+        <div class="form-hint">쉼표로 구분</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">썸네일 이미지</label>
+        <div class="form-upload" onclick="document.getElementById('thumb-file').click()">
+          📷 클릭해서 이미지 업로드
+          <input id="thumb-file" type="file" accept="image/*" style="display:none" onchange="onThumbUpload(event,'${isEdit?c.id:''}')">
+        </div>
+        ${c.thumb?`<img class="upload-preview" src="${esc(c.thumb)}" alt="미리보기" id="thumb-preview">`:`<div id="thumb-preview"></div>`}
+      </div>
+      <div class="form-group">
+        <label class="form-label">대시보드 상태</label>
+        <select id="f-status" class="form-select">
+          <option value="normal" ${(c.status||"normal")==="normal"?"selected":""}>✅ 정상</option>
+          <option value="maintenance" ${c.status==="maintenance"?"selected":""}>🔧 점검중</option>
+          <option value="updating" ${c.status==="updating"?"selected":""}>🔄 업데이트중</option>
+          <option value="error" ${c.status==="error"?"selected":""}>❌ 오류</option>
+        </select>
+      </div>
+      <div class="form-row" style="gap:16px">
+        <label class="form-check"><input id="f-star" type="checkbox" ${c.star?"checked":""}> ⭐ 핵심 대시보드</label>
+        <label class="form-check"><input id="f-new" type="checkbox" ${c.isNew?"checked":""}> 🆕 NEW 표시</label>
+        <label class="form-check"><input id="f-hidden" type="checkbox" ${c.hidden?"checked":""}> 🙈 조회자에게 숨기기</label>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-yellow" style="flex:1" onclick="${isEdit?`saveEdit(${c.id})`:'addCard()'}">
+          ${isEdit?"저장":"추가"}
+        </button>
+        <button class="btn btn-gray" style="flex:1" onclick="closeModal()">취소</button>
+      </div>`;
+  }
+
+  // ── 배너 버튼 편집
+  if (S.modal === "banner") {
+    const b = S.editTarget;
+    inner = `
+      <div class="modal-title">🔗 배너 버튼 편집</div>
+      <div class="form-group">
+        <label class="form-label">버튼 라벨</label>
+        <input id="bb-label" class="form-input" value="${esc(b.label)}" placeholder="📖 이용 방법">
+      </div>
+      <div class="form-group">
+        <label class="form-label">연결 URL</label>
+        <input id="bb-url" class="form-input" value="${esc(b.url)}" placeholder="https://...">
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-yellow" style="flex:1" onclick="saveBannerBtn()">저장</button>
+        <button class="btn btn-gray btn-sm" onclick="deleteBannerBtn()" style="background:#FFEBEE;color:#C62828">삭제</button>
+        <button class="btn btn-gray" style="flex:1" onclick="closeModal()">취소</button>
+      </div>`;
+  }
+
+  // ── 공지 편집
+  if (S.modal === "notice") {
+    inner = `
+      <div class="modal-title">📢 공지사항 설정</div>
+      <div class="form-group">
+        <label class="form-label">공지 내용</label>
+        <textarea id="notice-text" class="form-textarea" placeholder="전사에 공유할 공지를 입력하세요">${esc(S.notice.text)}</textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-check">
+          <input id="notice-visible" type="checkbox" ${S.notice.visible?"checked":""}> 공지 표시 활성화
+        </label>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-yellow" style="flex:1" onclick="saveNoticeModal()">저장</button>
+        <button class="btn btn-gray" style="flex:1" onclick="closeModal()">취소</button>
+      </div>`;
+  }
+
+
+  // ── 표시 설정
+  if (S.modal === "display") {
+    const DS = S.displaySettings;
+    const items = [
+      { key:"thumb",      icon:"🖼", label:"썸네일 이미지",    desc:"카드 상단 이미지 표시" },
+      { key:"status",     icon:"🚦", label:"대시보드 상태 배지", desc:"정상/점검중/업데이트중/오류" },
+      { key:"kpiTags",    icon:"🏷", label:"KPI 태그",         desc:"예약인원, 판매금액 등" },
+      { key:"catTags",    icon:"📂", label:"카테고리 태그",     desc:"예약, 정산/실적 등" },
+      { key:"team",       icon:"👥", label:"담당팀",           desc:"카드 하단 담당팀 표시" },
+      { key:"newBadge",   icon:"🆕", label:"NEW 배지",         desc:"신규 대시보드 표시" },
+      { key:"visitCount", icon:"👁", label:"방문 수",          desc:"클릭 횟수 표시" },
+      { key:"favBtn",     icon:"⭐", label:"즐겨찾기 버튼",    desc:"별 아이콘 버튼" },
+    ];
+    inner = `
+      <div class="modal-title">🎛 카드 표시 설정</div>
+      <p class="modal-sub">전체 카드에 일괄 적용돼요</p>
+      ${items.map(item=>`
+        <div class="display-setting-row">
+          <div>
+            <div class="display-setting-label">${item.icon} ${item.label}</div>
+            <div class="display-setting-desc">${item.desc}</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" ${DS[item.key]?"checked":""} onchange="toggleDisplay('${item.key}',this.checked)">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>`).join("")}
+      <div class="form-actions" style="margin-top:20px">
+        <button class="btn btn-gray" style="flex:1" onclick="closeModal()">닫기</button>
+        <button class="btn btn-gray btn-sm" onclick="resetDisplay()">기본값으로 초기화</button>
+      </div>`;
+  }
+
+  // ── 로고 변경
+  if (S.modal === "logo") {
+    inner = `
+      <div class="modal-title">🖼 로고 변경</div>
+      <p class="modal-sub">회사 로고 이미지를 업로드하면 헤더에 표시됩니다</p>
+      <div class="form-group">
+        <div class="form-upload" onclick="document.getElementById('logo-file').click()">
+          📁 클릭해서 로고 이미지 업로드 (PNG/SVG 권장)
+          <input id="logo-file" type="file" accept="image/*" style="display:none" onchange="onLogoUpload(event)">
+        </div>
+        ${S.logoUrl?`<img src="${esc(S.logoUrl)}" style="max-height:60px;margin-top:12px;border-radius:6px" alt="현재 로고">`:""}
+      </div>
+      ${S.logoUrl?`<button class="btn btn-gray btn-sm" onclick="removeLogo()" style="margin-bottom:12px">기본 아이콘으로 초기화</button>`:""}
+      <div class="form-actions">
+        <button class="btn btn-gray" style="flex:1" onclick="closeModal()">닫기</button>
+      </div>`;
+  }
+
+  // ── 방문 통계
+  if (S.modal === "stats") {
+    const visits = S.visits||{};
+    const sorted = S.cards
+      .map(c=>({...c, cnt: visits[c.id]||0}))
+      .sort((a,b)=>b.cnt-a.cnt)
+      .slice(0,15);
+    const maxV = getMaxVisits();
+    inner = `
+      <div class="modal-title">📊 방문 통계</div>
+      <p class="modal-sub" style="margin-bottom:16px">클릭 수 기준 상위 대시보드</p>
+      ${sorted.map((c,i)=>`
+        <div class="stat-row">
+          <span class="stat-rank">${i+1}</span>
+          <span style="font-size:16px">${c.icon}</span>
+          <span class="stat-name">${esc(c.title)}</span>
+          <div class="stat-bar-wrap"><div class="stat-bar" style="width:${c.cnt?Math.round(c.cnt/maxV*100):0}%"></div></div>
+          <span class="stat-count">${c.cnt}회</span>
+        </div>`).join("")}
+      ${sorted.every(c=>c.cnt===0)?`<div style="text-align:center;padding:20px 0;color:var(--gray2)">아직 방문 기록이 없어요</div>`:""}
+      <div style="margin-top:20px;padding-top:16px;border-top:2px solid var(--border);">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:var(--gray)">🔗 배너 버튼 클릭 통계</div>
+        ${S.bannerBtns.map((b,bi)=>{
+          const cnt = (visits["btn_"+b.id]||0);
+          const maxBtnV = Math.max(1,...S.bannerBtns.map(bb=>visits["btn_"+bb.id]||0));
+          return `<div class="stat-row">
+            <span class="stat-rank">${bi+1}</span>
+            <span class="stat-name">${esc(b.label)}</span>
+            <div class="stat-bar-wrap"><div class="stat-bar" style="width:${cnt?Math.round(cnt/maxBtnV*100):0}%;background:#64B5F6"></div></div>
+            <span class="stat-count">${cnt}회</span>
+          </div>`;
+        }).join("")}
+      </div>
+      <div class="form-actions" style="margin-top:20px">
+        <button class="btn btn-gray" style="flex:1" onclick="closeModal()">닫기</button>
+        <button class="btn btn-gray btn-sm" onclick="if(confirm('방문 통계를 초기화할까요?')){S.visits={};saveVisits();closeModal();}">초기화</button>
+      </div>`;
+  }
+
+  const isWide = ["add","edit","preview","stats","display"].includes(S.modal);
+  return `
+  <div class="modal-overlay" onclick="closeModal()">
+    <div class="modal${isWide?" modal-wide":""}" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      ${inner}
+    </div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════════
+// 이벤트 바인딩
+// ══════════════════════════════════════════════
+function bindEvents() {
+  if (S.modal==="login") setTimeout(()=>document.getElementById("pw-input")?.focus(),50);
+  const si = document.getElementById("searchInput");
+  if (si) {
+    si.addEventListener("input", function() {
+      S.search = this.value;
+      S.acResults = getAcResults(this.value);
+      S.acIdx = -1;
+      const sc = document.getElementById("searchClear");
+      if (sc) sc.style.display = this.value ? "block" : "none";
+      // 자동완성 드롭다운 업데이트
+      const acEl = document.getElementById("acDropdown");
+      const acHtml = S.acResults.length && S.search ? `
+        ${S.acResults.map((r,i)=>`
+          <div class="autocomplete-item" onclick="selectAc(${i})">
+            <span>${highlightMatch(esc(r.label), esc(S.search))}</span>
+            <span class="ac-type">${r.type}</span>
+          </div>`).join("")}` : "";
+      if (acEl) { acEl.innerHTML = acHtml; acEl.style.display = S.acResults.length&&S.search?"block":"none"; }
+      else {
+        const wrap = si.parentElement;
+        const newAc = document.createElement("div");
+        newAc.id = "acDropdown"; newAc.className = "autocomplete-dropdown";
+        newAc.innerHTML = acHtml;
+        newAc.style.display = S.acResults.length&&S.search?"block":"none";
+        wrap.appendChild(newAc);
+      }
+      // 카드 그리드 업데이트
+      const filtered = getFiltered();
+      const grid = document.getElementById("mainCardGrid");
+      const badge = document.getElementById("mainBadge");
+      const noResult = document.getElementById("noResult");
+      if (grid) grid.innerHTML = S.viewMode==="list"
+        ? filtered.map((c,i)=>buildListCard(c,i)).join("")
+        : filtered.map((c,i)=>buildCard(c,i,false)).join("");
+      if (badge) badge.textContent = filtered.length + "개";
+      if (noResult) noResult.style.display = filtered.length===0?"block":"none";
+    });
+    si.addEventListener("keydown", function(e) {
+      const ac = S.acResults;
+      if (!ac.length) return;
+      if (e.key==="ArrowDown") { e.preventDefault(); S.acIdx=Math.min(S.acIdx+1,ac.length-1); updateAcActive(); }
+      else if (e.key==="ArrowUp") { e.preventDefault(); S.acIdx=Math.max(S.acIdx-1,-1); updateAcActive(); }
+      else if (e.key==="Enter" && S.acIdx>=0) { e.preventDefault(); selectAc(S.acIdx); }
+      else if (e.key==="Escape") { S.acResults=[]; S.acIdx=-1; const el=document.getElementById("acDropdown"); if(el) el.style.display="none"; }
+    });
+    si.addEventListener("blur", function() {
+      setTimeout(()=>{ const el=document.getElementById("acDropdown"); if(el) el.style.display="none"; }, 200);
+    });
+    si.addEventListener("focus", function() {
+      if (S.acResults.length && S.search) { const el=document.getElementById("acDropdown"); if(el) el.style.display="block"; }
+    });
+  }
+}
+
+function updateAcActive() {
+  document.querySelectorAll(".autocomplete-item").forEach((el,i)=>{
+    el.classList.toggle("active", i===S.acIdx);
+  });
+}
+
+function selectAc(i) {
+  const r = S.acResults[i];
+  if (!r) return;
+  if (r.type==="대시보드" && r.id) { S.acResults=[]; openPreview(r.id); return; }
+  S.search = r.label;
+  S.acResults = [];
+  S.acIdx = -1;
+  const si = document.getElementById("searchInput");
+  if (si) { si.value = r.label; si.focus(); }
+  const filtered = getFiltered();
+  const grid = document.getElementById("mainCardGrid");
+  if (grid) grid.innerHTML = S.viewMode==="list"
+    ? filtered.map((c,i)=>buildListCard(c,i)).join("")
+    : filtered.map((c,i)=>buildCard(c,i,false)).join("");
+  const badge = document.getElementById("mainBadge");
+  if (badge) badge.textContent = filtered.length+"개";
+  const ac = document.getElementById("acDropdown");
+  if (ac) ac.style.display="none";
+}
+
+// KPI 태그 자동완성
+function onKpiInput(el) {
+  const val = el.value;
+  const parts = val.split(",");
+  const last = parts[parts.length-1].trim();
+  const acEl = document.getElementById("kpiAc");
+  if (!acEl) return;
+  if (!last) { acEl.innerHTML=""; return; }
+  const suggestions = getAllTags().filter(t=>t.toLowerCase().includes(last.toLowerCase()) && !parts.slice(0,-1).map(p=>p.trim()).includes(t));
+  acEl.innerHTML = suggestions.length ? `<div class="tag-autocomplete">${suggestions.slice(0,8).map(t=>`<div class="tag-ac-item" onmousedown="insertKpiTag('${esc(t)}')">${esc(t)}</div>`).join("")}</div>` : "";
+}
+function insertKpiTag(tag) {
+  const el = document.getElementById("f-kpis");
+  if (!el) return;
+  const parts = el.value.split(",").map(p=>p.trim()).filter(Boolean);
+  parts[parts.length-1] = tag;
+  el.value = parts.join(", ") + ", ";
+  el.focus();
+  const acEl = document.getElementById("kpiAc");
+  if (acEl) acEl.innerHTML="";
+}
+
+// ══════════════════════════════════════════════
+// 액션
+// ══════════════════════════════════════════════
+function openModal(type, id) {
+  S.modal = type;
+  S.pwError = false;
+  if (type==="edit" && id) {
+    S.editTarget = JSON.parse(JSON.stringify(S.cards.find(c=>c.id===id)));
+  }
+  if (type==="preview" && id) {
+    S.previewCard = S.cards.find(c=>c.id===id);
+    addRecent(id);
+  }
+  render();
+}
+function closeModal() { S.modal=null; S.editTarget=null; S.previewCard=null; render(); }
+
+function doLogin() {
+  const pw = document.getElementById("pw-input")?.value||"";
+  if (pw===ADMIN_PASSWORD) { S.isAdmin=true; S.modal=null; S.pwError=false; }
+  else S.pwError=true;
+  render();
+}
+function logout() { S.isAdmin=false; render(); }
+
+function setFilterType(t) { S.filterType=t; S.filterVal="전체"; render(); }
+function setViewMode(m) { S.viewMode=m; render(); }
+function setFilter(v) { S.filterVal=v; render(); }
+
+function onSearch(v) { S.search=v; render(); }
+function clearSearch() { S.search=""; render(); }
+
+function toggleFav(id) {
+  if (S.favorites.includes(id)) S.favorites=S.favorites.filter(x=>x!==id);
+  else S.favorites=[...S.favorites, id];
+  saveFavs(); render();
+}
+
+function toggleDisplay(key, val) {
+  S.displaySettings[key] = val;
+  saveDisplay();
+  // 카드만 부분 업데이트
+  const grid = document.getElementById("mainCardGrid");
+  if (grid) {
+    const filtered = getFiltered();
+    grid.innerHTML = S.viewMode==="list"
+      ? filtered.map((c,i)=>buildListCard(c,i)).join("")
+      : filtered.map((c,i)=>buildCard(c,i,false)).join("");
+  }
+}
+function resetDisplay() {
+  S.displaySettings = { thumb:true, status:true, kpiTags:true, catTags:true, team:true, newBadge:true, visitCount:true, favBtn:true };
+  saveDisplay(); render();
+}
+
+function toggleHidden(id) {
+  S.cards = S.cards.map(c=>c.id===id?{...c,hidden:!c.hidden}:c);
+  saveCards();
+}
+
+function dismissNotice() { S.notice.visible=false; saveNotice(); render(); }
+
+// ── 배너 버튼
+function editBannerBtn(i) {
+  S.editTarget = { ...S.bannerBtns[i], _idx: i };
+  S.modal = "banner";
+  render();
+}
+function addBannerBtn() {
+  const newBtn = { id: Date.now(), label: "🔗 새 버튼", url: "#" };
+  S.bannerBtns.push(newBtn);
+  S.editTarget = { ...newBtn, _idx: S.bannerBtns.length-1 };
+  S.modal = "banner";
+  saveBtns(); render();
+}
+function saveBannerBtn() {
+  const label = document.getElementById("bb-label").value.trim()||"버튼";
+  const url   = document.getElementById("bb-url").value.trim()||"#";
+  S.bannerBtns[S.editTarget._idx] = { ...S.bannerBtns[S.editTarget._idx], label, url };
+  saveBtns(); closeModal();
+}
+function deleteBannerBtn() {
+  S.bannerBtns.splice(S.editTarget._idx, 1);
+  saveBtns(); closeModal();
+}
+
+// ── 공지
+function saveNoticeModal() {
+  S.notice.text    = document.getElementById("notice-text").value.trim();
+  S.notice.visible = document.getElementById("notice-visible").checked;
+  saveNotice(); closeModal();
+}
+
+// ── 로고
+function onLogoUpload(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => { S.logoUrl=ev.target.result; saveLogo(); render(); };
+  reader.readAsDataURL(file);
+}
+function removeLogo() { S.logoUrl=""; saveLogo(); render(); }
+
+// ── 썸네일
+function onThumbUpload(e, cardId) {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const dataUrl = ev.target.result;
+    const preview = document.getElementById("thumb-preview");
+    if (preview) { preview.outerHTML=`<img class="upload-preview" src="${dataUrl}" id="thumb-preview">`; }
+    // editTarget에 저장
+    if (S.editTarget) S.editTarget.thumb = dataUrl;
+    else if (S.modal==="add") { if(!window._tmpThumb) window._tmpThumb={}; window._tmpThumb.thumb=dataUrl; }
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── 카드 CRUD
+function getFormValues() {
+  return {
+    icon:       document.getElementById("f-icon").value.trim()||"📊",
+    title:      document.getElementById("f-title").value.trim(),
+    url:        document.getElementById("f-url").value.trim()||"#",
+    desc:       document.getElementById("f-desc").value.trim(),
+    categories: document.getElementById("f-cats").value.split(",").map(s=>s.trim()).filter(Boolean),
+    kpis:       document.getElementById("f-kpis").value.split(",").map(s=>s.trim()).filter(Boolean),
+    team:       document.getElementById("f-team").value.trim()||"CRM/BI팀",
+    star:       document.getElementById("f-star").checked,
+    isNew:      document.getElementById("f-new").checked,
+    hidden:     document.getElementById("f-hidden")?.checked||false,
+    status:     document.getElementById("f-status")?.value||"normal",
+    thumb:      S.editTarget?.thumb || window._tmpThumb?.thumb || "",
+  };
+}
+
+function addCard() {
+  const v = getFormValues();
+  if (!v.title) return alert("대시보드명을 입력해주세요.");
+  S.cards.push({ id: Date.now(), ...v });
+  window._tmpThumb = null;
+  S.modal = null;
+  saveCards();
+}
+
+function saveEdit(id) {
+  const v = getFormValues();
+  if (!v.title) return alert("대시보드명을 입력해주세요.");
+  S.cards = S.cards.map(c=>c.id===id?{...c,...v}:c);
+  S.modal = null;
+  saveCards();
+}
+
+function deleteCard(id) {
+  if (!confirm("이 카드를 삭제할까요?")) return;
+  S.cards = S.cards.filter(c=>c.id!==id);
+  S.favorites = S.favorites.filter(x=>x!==id);
+  S.recent = S.recent.filter(x=>x!==id);
+  saveFavs(); saveRecent(); saveCards();
+}
+
+// ── 드래그
+function onDragStart(e,i){ S.dragIdx=i; e.currentTarget.classList.add("dragging"); }
+function onDragOver(e,i){ e.preventDefault(); document.querySelectorAll(".card").forEach(el=>el.classList.remove("drag-over")); e.currentTarget.classList.add("drag-over"); }
+function onDragLeave(e){ e.currentTarget.classList.remove("drag-over"); }
+async function onDrop(e,toIdx){
+  e.preventDefault();
+  const fromIdx = S.dragIdx;
+  if (fromIdx===null||fromIdx===toIdx){ S.dragIdx=null; render(); return; }
+  const filtered = getFiltered();
+  const fromCard = filtered[fromIdx], toCard = filtered[toIdx];
+  const rFrom = S.cards.findIndex(c=>c.id===fromCard.id);
+  const rTo   = S.cards.findIndex(c=>c.id===toCard.id);
+  const arr = [...S.cards];
+  const [moved] = arr.splice(rFrom,1);
+  arr.splice(rTo,0,moved);
+  S.cards = arr; S.dragIdx = null;
+  await saveCards();
+}
+
+function openPreview(id) { openModal("preview", id); }
+
+// ══════════════════════════════════════════════
+// 초기 로드
+// ══════════════════════════════════════════════
+loadAll();
+</script>
 </body>
 </html>
