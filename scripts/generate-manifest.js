@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 /**
  * generate-manifest.js
- * 
- * hotel_search/parquet1 폴더를 스캔하여 hotel_search/manifest.json을 생성합니다.
- * 실행: node scripts/generate-manifest.js
+ * hotel-search/public/parquet1 폴더를 스캔하여
+ * hotel-search/public/manifest.json 을 생성합니다.
  */
 
 const fs = require('fs');
@@ -26,12 +25,14 @@ const COUNTRY_NAMES = {
   US: '미국', VN: '베트남', ZA: '남아프리카 공화국',
 };
 
-// hotel_search/parquet1 경로
-const parquetBase = path.join(__dirname, '..', 'hotel_search', 'parquet1');
+// 경로: 스크립트는 repo 루트의 scripts/ 에 있음
+// parquet 파일은 hotel-search/public/parquet1/ 에 있어야 함
+const parquetBase = path.join(__dirname, '..', 'hotel-search', 'public', 'parquet1');
+const outPath    = path.join(__dirname, '..', 'hotel-search', 'public', 'manifest.json');
 
 if (!fs.existsSync(parquetBase)) {
-  console.error(`❌ 폴더가 존재하지 않습니다: ${parquetBase}`);
-  console.error('   hotel_search/parquet1/ 폴더에 COUNTRY_CODE=XX 형태의 하위 폴더와 parquet 파일을 넣어주세요.');
+  console.error(`❌ 폴더 없음: ${parquetBase}`);
+  console.error('   hotel-search/public/parquet1/ 폴더에 COUNTRY_CODE=XX 형태로 parquet 파일을 넣어주세요.');
   process.exit(1);
 }
 
@@ -41,7 +42,6 @@ const countries = [];
 for (const entry of entries) {
   const match = entry.match(/^COUNTRY_CODE=(.+)$/);
   if (!match) continue;
-
   const code = match[1];
   const folderPath = path.join(parquetBase, entry);
   if (!fs.statSync(folderPath).isDirectory()) continue;
@@ -51,20 +51,9 @@ for (const entry of entries) {
     .map(f => `parquet1/${entry}/${f}`);
 
   if (files.length === 0) continue;
-
-  countries.push({
-    code,
-    name: COUNTRY_NAMES[code] || code,
-    files,
-  });
+  countries.push({ code, name: COUNTRY_NAMES[code] || code, files });
 }
 
-const manifest = { countries };
-
-// hotel_search/manifest.json 에 저장
-const outPath = path.join(__dirname, '..', 'hotel_search', 'manifest.json');
-fs.writeFileSync(outPath, JSON.stringify(manifest, null, 2), 'utf-8');
-
-console.log(`✅ manifest.json 생성 완료 → hotel_search/manifest.json`);
-console.log(`   ${countries.length}개 국가 등록됨`);
+fs.writeFileSync(outPath, JSON.stringify({ countries }, null, 2), 'utf-8');
+console.log(`✅ manifest.json 생성 완료 (${countries.length}개 국가)`);
 countries.forEach(c => console.log(`   ${c.code} (${c.name}): ${c.files.length}개 파일`));
