@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Hotel Data Explorer</title>
+    <script src="https://cdn.jsdelivr.net/npm/@duckdb/duckdb-wasm@1.28.0/dist/duckdb-wasm-browser.js"></script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f4f7f6; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .controls { display: flex; gap: 10px; margin-bottom: 20px; }
+        select { flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #ccc; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:disabled { background: #ccc; }
+        #status { margin-bottom: 10px; font-size: 0.9em; color: #666; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #eee; padding: 12px; text-align: left; }
+        th { background: #f8f9fa; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🏨 호텔 데이터 조회</h1>
+    
+    <div id="status">시스템 초기화 중...</div>
+
+    <div class="controls">
+        <select id="country-select">
+            <option value="">-- 국가를 선택하세요 --</option>
+        </select>
+        <button id="search-btn" onclick="fetchData()" disabled>데이터 조회</button>
+    </div>
+
+    <table id="data-table" style="display: none;">
+        <thead>
+            <tr>
+                <th>호텔명</th>
+                <th>성급</th>
+                <th>평점</th>
+                <th>주소</th>
+            </tr>
+        </thead>
+        <tbody id="result-body"></tbody>
+    </table>
+</div>
+
+<script type="module">
+    // 1. [중요] 여기에 실제 parquet1 폴더에 있는 COUNTRY_CODE들을 넣으세요
+    const countryMapping = {
+        "AD": "안도라 (Andorra)",
+        "KR": "대한민국 (South Korea)",
+        "JP": "일본 (Japan)",
+        "US": "미국 (USA)",
+        "GB": "영국 (UK)",
+        "FR": "프랑스 (France)",
+        "TH": "태국 (Thailand)",
+        "VN": "베트남 (Vietnam)"
+    };
+
+    const select = document.getElementById('country-select');
+    const status = document.getElementById('status');
+    const btn = document.getElementById('search-btn');
+
+    // 2. 리스트부터 즉시 생성 (에러 방지를 위해 최상단에 배치)
+    try {
+        console.log("리스트 생성 시작...");
+        Object.entries(countryMapping).forEach(([code, name]) => {
+            const opt = document.createElement('option');
+            opt.value = code;
+            opt.textContent = `${name} (${code})`;
+            select.appendChild(opt);
+        });
+        console.log("리스트 생성 완료!");
+    } catch (err) {
+        console.error("리스트 생성 중 에러:", err);
+    }
+
+    let db;
+    let conn;
+
+    // 3. DuckDB 엔진 초기화
+    async function init() {
+        try {
+            const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
+            const bundle = await duckdb.selectBundle(JSDELIVR_BUNDLES);
+            const worker = new Worker(URL.createObjectURL(new Blob([`importScripts("${bundle.mainWorker}");`], {type: 'text/javascript'})));
+            db = new duckdb.AsyncDuckDB(new duckdb.ConsoleLogger(), worker);
+            await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
+            
+            status.innerText = "✅ 준비 완료";
+            btn.disabled = false;
+        } catch (e) {
+            console.error("DuckDB 로딩 실패:", e);
+            status.innerText = "❌ 엔진 로딩 실패 (인터넷 연결을 확인하세요)";
+        }
+    }
+
+    // 4. 데이터 조회 함수
+    window.fetchData = async () => {
+        const code = select.value;
+        if (!code) return;
+
+        const tbody = document.getElementById('result-body');
+        const table = document.getElementById('data-table');
+
+        status.innerText = `🔍 ${countryMapping[code]} 데이터를 읽는 중...`;
+        table.style.display = "none";
+        tbody.innerHTML = "";
+
+        try {
+            if (!conn) conn = await db.connect();
+            await conn.query(`DROP TABLE IF EXISTS hotels`);
+
+            // 경로: parquet1/COUNTRY_CODE=AD/*.parquet
+            const parquetPath = `./parquet1/COUNTRY_CODE=${code}/*.parquet`;
+            console.log("요청 경로:", parquetPath);
+
+            await conn.query(`CREATE TABLE hotels AS SELECT * FROM read_parquet('${parquetPath}')`);
+            
+            const res = await conn.query(`
+                SELECT HOTEL_NAME_KO, STAR_RATING, ALL_AVERAGE, ADDRESS_KO 
+                FROM hotels 
+                ORDER BY ALL_AVERAGE DESC 
+                LIMIT 50
+            `);
+
+            const rows = res.toArray();
+            if (rows.length === 0) {
+                status.innerText = "⚠️ 데이터가 비어 있습니다.";
+                return;
+            }
+
+            rows.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row.HOTEL_NAME_KO || '명칭 없음'}</td>
+                    <td>${row.STAR_RATING || '-'}</td>
+                    <td>${row.ALL_AVERAGE || '-'}</td>
+                    <td>${row.ADDRESS_KO || '-'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            table.style.display = "table";
+            status.innerText = `✅ 조회 완료: ${rows.length}건`;
+
+        } catch (e) {
+            console.error("조회 중 에러:", e);
+            status.innerText = "❌ 데이터를 불러오지 못했습니다. 폴더명과 파일 위치를 확인하세요.";
+        }
+    };
+
+    init();
+</script>
+</body>
+</html>
