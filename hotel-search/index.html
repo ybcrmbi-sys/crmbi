@@ -203,74 +203,62 @@
   }
 
   window.doSearch = async function() {
-    const countryCode = document.getElementById('countrySelect').value;
-    const keyword = document.getElementById('hotelSearch').value.trim();
+  const countryCode = document.getElementById('countrySelect').value;
+  const keyword = document.getElementById('hotelSearch').value.trim();
 
-    if (!countryCode) { showToast('국가를 선택해주세요'); return; }
+  if (!countryCode) { showToast('국가를 선택해주세요'); return; }
 
-    const btn = document.getElementById('searchBtn');
-    btn.disabled = true;
-    btn.textContent = '조회 중...';
-    setListLoading();
+  const btn = document.getElementById('searchBtn');
+  btn.disabled = true;
+  btn.textContent = '조회 중...';
+  setListLoading();
 
-    try {
-      // 경로 설정을 절대 경로 위주로 보강
-      const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/');
-      const folder = `${baseUrl}parquet1/COUNTRY_CODE=${countryCode}/`;
-      
-      console.log('Fetching Parquet from:', folder);
+  try {
+    // 1. 경로 설정 (이미지 경로 기준: parquet1/COUNTRY_CODE=XX/)
+    const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/');
+    const folderPath = `${baseUrl}parquet1/COUNTRY_CODE=${countryCode}/`;
+    
+    // 2. 파일명 패턴 설정 (파일명이 무엇이든 .parquet으로 끝나는 모든 파일 읽기)
+    const parquetPattern = `${folderPath}*.parquet`;
+    
+    console.log('Trying to read pattern:', parquetPattern);
 
-      const candidates = Array.from({length: 20}, (_, i) => 
-        `${folder}part-${String(i).padStart(5,'0')}.parquet`
-      );
+    // 3. 쿼리 실행 (read_parquet에 glob 패턴 사용)
+    const filterSql = keyword ? `WHERE UPPER(HOTEL_NAME_SEARCH) LIKE '%${keyword.toUpperCase().replace(/'/g, "''")}%'` : '';
+    
+    const sql = `
+      SELECT HOTEL_CODE, COUNTRY_CODE, COUNTRY_NM, CITY_CODE, HOTEL_TYPE_CODE,
+             HOTEL_NAME_EN, HOTEL_NAME_KO, STAR_RATING, DEFAULT_PHOTO_URL,
+             ADDRESS_KO, CHECK_IN_TIME, CHECK_OUT_TIME, LATITUDE, LONGITUDE,
+             FACILITY_LIST, HOTEL_INTRO_KO, ALL_AVERAGE, REVIEW_COUNT,
+             CLEANLINESS_AVERAGE, SERVICE_AVERAGE, COMFORT_AVERAGE, 
+             CONDITION_AVERAGE, LOCATION_AVERAGE, QUALITY_AVERAGE,
+             CHAIN_BRAND_NAME_KO, HOTEL_ROOM_COUNT, PHONE_NO,
+             HOTEL_FACILITY_KO, ROOM_FACILITY_KO, HOTEL_ATTRACTION_KO, HOTEL_CAUTION_KO
+      FROM read_parquet('${parquetPattern}')
+      ${filterSql}
+      ORDER BY ALL_AVERAGE DESC NULLS LAST, HOTEL_NAME_KO
+      LIMIT 200
+    `;
 
-      // 파일 존재 여부 체크 시 CORS 에러 발생 가능성 로깅
-      const checks = await Promise.all(
-        candidates.map(url => 
-          fetch(url, { method: 'HEAD' })
-            .then(r => r.ok ? url : null)
-            .catch(e => {
-              console.warn(`File check failed for ${url}:`, e);
-              return null;
-            })
-        )
-      );
-      const fileUrls = checks.filter(Boolean);
-
-      if (fileUrls.length === 0) {
-        throw new Error(`파일을 찾을 수 없습니다. 경로와 CORS 설정을 확인하세요.`);
-      }
-
-      const fileList = fileUrls.map(u => `'${u}'`).join(', ');
-      const filterSql = keyword ? `WHERE UPPER(HOTEL_NAME_SEARCH) LIKE '%${keyword.toUpperCase().replace(/'/g, "''")}%'` : '';
-      
-      const sql = `
-        SELECT HOTEL_CODE, COUNTRY_CODE, COUNTRY_NM, CITY_CODE, HOTEL_TYPE_CODE,
-               HOTEL_NAME_EN, HOTEL_NAME_KO, STAR_RATING, DEFAULT_PHOTO_URL,
-               ADDRESS_KO, CHECK_IN_TIME, CHECK_OUT_TIME, LATITUDE, LONGITUDE,
-               FACILITY_LIST, HOTEL_INTRO_KO, ALL_AVERAGE, REVIEW_COUNT,
-               CLEANLINESS_AVERAGE, SERVICE_AVERAGE, COMFORT_AVERAGE, 
-               CONDITION_AVERAGE, LOCATION_AVERAGE, QUALITY_AVERAGE,
-               CHAIN_BRAND_NAME_KO, HOTEL_ROOM_COUNT, PHONE_NO,
-               HOTEL_FACILITY_KO, ROOM_FACILITY_KO, HOTEL_ATTRACTION_KO, HOTEL_CAUTION_KO
-        FROM read_parquet([${fileList}])
-        ${filterSql}
-        ORDER BY ALL_AVERAGE DESC NULLS LAST, HOTEL_NAME_KO
-        LIMIT 200
-      `;
-
-      const result = await conn.query(sql);
-      allHotels = result.toArray().map(r => Object.fromEntries(Object.entries(r)));
-      renderList(allHotels);
-    } catch (e) {
-      console.error('Search Runtime Error:', e);
-      showToast('오류 발생: ' + e.message);
-      renderList([]);
-    } finally {
-      btn.disabled = false;
-      btn.textContent = '검색';
+    const result = await conn.query(sql);
+    allHotels = result.toArray().map(r => Object.fromEntries(Object.entries(r)));
+    renderList(allHotels);
+    
+  } catch (e) {
+    console.error('Search Runtime Error:', e);
+    // 에러 발생 시 사용자에게 더 친절한 안내
+    if (e.message.includes('No files found')) {
+        showToast(`해당 국가(${countryCode})의 데이터를 찾을 수 없습니다.`);
+    } else {
+        showToast('오류 발생: 경로 또는 CORS 설정을 확인하세요.');
     }
-  };
+    renderList([]);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '검색';
+  }
+};
 
   function renderList(hotels) {
     const list = document.getElementById('hotelList');
