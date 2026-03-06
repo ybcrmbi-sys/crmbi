@@ -1,7 +1,4 @@
 {
   "name": "hotel-search",
-  "version": "1.0.0",
-  "scripts": {
-    "build": "node scripts/generate-manifest.js"
-  }
+  "version": "1.0.0"
 }
