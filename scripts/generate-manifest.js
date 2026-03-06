@@ -25,10 +25,9 @@ const COUNTRY_NAMES = {
   US: '미국', VN: '베트남', ZA: '남아프리카 공화국',
 };
 
-// 경로: 스크립트는 repo 루트의 scripts/ 에 있음
-// parquet 파일은 hotel-search/public/parquet1/ 에 있어야 함
-const parquetBase = path.join(__dirname, '..', 'hotel-search', 'public', 'parquet1');
-const outPath    = path.join(__dirname, '..', 'hotel-search', 'public', 'manifest.json');
+// scripts/ 기준으로 ../hotel-search/parquet1
+const parquetBase = path.join(__dirname, '..', 'hotel-search', 'parquet1');
+const outPath     = path.join(__dirname, '..', 'hotel-search', 'manifest.json');
 
 if (!fs.existsSync(parquetBase)) {
   console.error(`❌ 폴더 없음: ${parquetBase}`);
