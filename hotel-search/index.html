@@ -753,9 +753,9 @@
       const folder = `${baseUrl}parquet1/COUNTRY_CODE=${countryCode}/`;
 
       // part-00000 ~ part-00019 까지 존재 여부 확인
-      const candidates = Array.from({length: 20}, (_, i) =>
-        `${folder}part-${String(i).padStart(5,'0')}.parquet`
-      );
+	const candidates = Array.from({length: 20}, (_, i) =>
+	  `${folder}part${String(i + 1).padStart(3,'0')}.parquet`
+	);
       const checks = await Promise.all(
         candidates.map(url =>
           fetch(url, { method: 'HEAD' })
