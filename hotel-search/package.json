@@ -1,0 +1,15 @@
+{
+  "name": "hotel-search",
+  "version": "1.0.0",
+  "description": "호텔 정보 검색 웹사이트 (DuckDB-WASM + Parquet)",
+  "scripts": {
+    "manifest": "node scripts/generate-manifest.js",
+    "build": "node scripts/generate-manifest.js",
+    "dev": "npx serve public -p 3000"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": ["hotel", "duckdb", "parquet"],
+  "license": "MIT"
+}
