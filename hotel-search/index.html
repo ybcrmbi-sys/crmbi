@@ -351,16 +351,12 @@
     }
 
     .photo-gallery {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      grid-template-rows: 1fr 1fr;
-      gap: 3px;
       height: 220px;
       overflow: hidden;
     }
     .photo-gallery .main-photo {
-      grid-row: 1 / 3;
-      grid-column: 1;
+      width: 100%;
+      height: 100%;
       overflow: hidden;
     }
     .gallery-img {
@@ -708,7 +704,7 @@
       <div class="logo-sub">OTA HOTEL DIRECTORY</div>
     </div>
   </div>
-  <div class="header-badge"> YBTOUR </div>
+  <div class="header-badge">YBTOUR</div>
 </header>
 
 <div class="app-body">
@@ -1050,12 +1046,6 @@
       <div class="detail-header">
         <div class="photo-gallery">
           <div class="main-photo">${mainPhoto}</div>
-          <div class="gallery-placeholder" style="background:linear-gradient(135deg,#1a234015,#c8102e10)">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-          </div>
-          <div class="gallery-placeholder" style="background:linear-gradient(135deg,#c8102e10,#1a234015)">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-          </div>
         </div>
 
         <div class="detail-title-area">
@@ -1073,15 +1063,15 @@
                   <button class="copy-btn-inline" style="opacity:1;width:22px;height:22px;" onclick="copyToClipboard(this,'${starLabel}')" title="성급 복사">${COPY_ICON}</button>
                 </div>
               </div>` : ''}
-              ${score ? `<div class="review-row">
-                <span class="review-score">★ ${score}</span>
-                ${reviewCount ? `<span class="review-text">(리뷰 ${reviewCount}개)</span>` : ''}
-              </div>` : ''}
             </div>
           </div>
           <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:8px;">
             ${h.ADDRESS_KO && h.ADDRESS_KO !== 'None' ? `<span style="font-size:12px;color:var(--text-sub);display:inline-flex;align-items:center;gap:4px;">📍 ${h.ADDRESS_KO}<button class="copy-btn-inline" onclick="copyToClipboard(this,'${h.ADDRESS_KO.replace(/'/g,"&#39;")}')" title="주소 복사">${COPY_ICON}</button></span>` : ''}
             ${mapsLink}
+            ${score ? `<div class="review-row">
+              <span class="review-score">★ ${score}</span>
+              ${reviewCount ? `<span class="review-text">(리뷰 ${reviewCount}개)</span>` : ''}
+            </div>` : ''}
           </div>
         </div>
       </div>
@@ -1113,20 +1103,22 @@
               <div class="checkin-time">${h.CHECK_OUT_TIME && h.CHECK_OUT_TIME !== 'None' && h.CHECK_OUT_TIME !== '[NULL]' ? h.CHECK_OUT_TIME : '-'}</div>
             </div>
           </div>
-          ${h.HOTEL_CAUTION_KO && h.HOTEL_CAUTION_KO !== 'None' && h.HOTEL_CAUTION_KO !== '[NULL]'
-            ? (() => {
-                const cautionText = h.HOTEL_CAUTION_KO.replace(/<[^>]+>/g,'').trim();
-                const cautionEsc = cautionText.replace(/'/g,"&#39;").replace(/"/g,'&quot;');
-                return `<div class="info-card full copy-block" style="margin-top:0;">
-                  <div class="info-card-title" style="display:flex;align-items:center;justify-content:space-between;">
-                    주의사항
-                    <button class="copy-btn" style="opacity:1;width:auto;height:auto;padding:3px 8px;gap:4px;font-size:11px;font-family:inherit;font-weight:500;" onclick="copyToClipboard(this,'${cautionEsc}')" title="복사">${COPY_ICON} 복사</button>
-                  </div>
-                  <p class="intro-text" style="font-size:12px;">${cautionText.substring(0,300)}${cautionText.length > 300 ? '...' : ''}</p>
-                </div>`;
-              })()
-            : ''}
         </div>
+
+        <!-- 주의사항 (별도 카드) -->
+        ${h.HOTEL_CAUTION_KO && h.HOTEL_CAUTION_KO !== 'None' && h.HOTEL_CAUTION_KO !== '[NULL]'
+          ? (() => {
+              const cautionText = h.HOTEL_CAUTION_KO.replace(/<[^>]+>/g,'').trim();
+              const cautionEsc = cautionText.replace(/'/g,"&#39;").replace(/"/g,'&quot;');
+              return `<div class="info-card full copy-block">
+                <div class="info-card-title" style="display:flex;align-items:center;justify-content:space-between;">
+                  주의사항
+                  <button class="copy-btn" style="opacity:1;width:auto;height:auto;padding:3px 8px;gap:4px;font-size:11px;font-family:inherit;font-weight:500;" onclick="copyToClipboard(this,'${cautionEsc}')" title="복사">${COPY_ICON} 복사</button>
+                </div>
+                <p class="intro-text" style="font-size:13px;">${cautionText}</p>
+              </div>`;
+            })()
+          : ''}
 
         <!-- 호텔 소개 -->
         ${introText ? `<div class="info-card full copy-block">
