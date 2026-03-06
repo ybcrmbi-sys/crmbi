@@ -2,18 +2,13 @@
 /**
  * generate-manifest.js
  * 
- * parquet1 폴더 구조를 스캔하여 manifest.json을 생성합니다.
+ * hotel_search/parquet1 폴더를 스캔하여 hotel_search/manifest.json을 생성합니다.
  * 실행: node scripts/generate-manifest.js
- * 
- * 폴더 구조 예시:
- *   public/parquet1/COUNTRY_CODE=KR/part-00000.parquet
- *   public/parquet1/COUNTRY_CODE=JP/part-00000.parquet
  */
 
 const fs = require('fs');
 const path = require('path');
 
-// 국가코드 → 국가명 매핑
 const COUNTRY_NAMES = {
   AE: '아랍 에미리트 연합', AL: '알바니아', AM: '아르메니아', AR: '아르헨티나',
   AT: '오스트리아', AU: '호주', AZ: '아제르바이잔', BE: '벨기에',
@@ -31,11 +26,12 @@ const COUNTRY_NAMES = {
   US: '미국', VN: '베트남', ZA: '남아프리카 공화국',
 };
 
-const parquetBase = path.join(__dirname, '..', 'public', 'parquet1');
+// hotel_search/parquet1 경로
+const parquetBase = path.join(__dirname, '..', 'hotel_search', 'parquet1');
 
 if (!fs.existsSync(parquetBase)) {
   console.error(`❌ 폴더가 존재하지 않습니다: ${parquetBase}`);
-  console.error('   public/parquet1/ 폴더에 COUNTRY_CODE=XX 형태의 하위 폴더와 parquet 파일을 넣어주세요.');
+  console.error('   hotel_search/parquet1/ 폴더에 COUNTRY_CODE=XX 형태의 하위 폴더와 parquet 파일을 넣어주세요.');
   process.exit(1);
 }
 
@@ -48,8 +44,7 @@ for (const entry of entries) {
 
   const code = match[1];
   const folderPath = path.join(parquetBase, entry);
-  const stat = fs.statSync(folderPath);
-  if (!stat.isDirectory()) continue;
+  if (!fs.statSync(folderPath).isDirectory()) continue;
 
   const files = fs.readdirSync(folderPath)
     .filter(f => f.endsWith('.parquet'))
@@ -64,15 +59,12 @@ for (const entry of entries) {
   });
 }
 
-if (countries.length === 0) {
-  console.warn('⚠️  parquet 파일을 찾지 못했습니다. 폴더 구조를 확인하세요.');
-}
-
 const manifest = { countries };
-const outPath = path.join(__dirname, '..', 'public', 'manifest.json');
+
+// hotel_search/manifest.json 에 저장
+const outPath = path.join(__dirname, '..', 'hotel_search', 'manifest.json');
 fs.writeFileSync(outPath, JSON.stringify(manifest, null, 2), 'utf-8');
 
-console.log(`✅ manifest.json 생성 완료: ${countries.length}개 국가`);
-countries.forEach(c => {
-  console.log(`   ${c.code} (${c.name}): ${c.files.length}개 파일`);
-});
+console.log(`✅ manifest.json 생성 완료 → hotel_search/manifest.json`);
+console.log(`   ${countries.length}개 국가 등록됨`);
+countries.forEach(c => console.log(`   ${c.code} (${c.name}): ${c.files.length}개 파일`));
