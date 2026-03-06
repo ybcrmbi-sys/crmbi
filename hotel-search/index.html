@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>호텔 정보 검색</title>
+  <title>OTA 호텔 정보 검색</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
   <style>
@@ -22,6 +22,8 @@
       --text-sub: #5a5a5a;
       --text-light: #999;
       --white: #ffffff;
+      --yellow: #FFC72C;
+      --yellow-dark: #e6b000;
       --shadow: 0 2px 16px rgba(0,0,0,0.08);
       --shadow-hover: 0 6px 28px rgba(0,0,0,0.14);
     }
@@ -37,7 +39,7 @@
 
     /* ── HEADER ── */
     header {
-      background: var(--navy);
+      background: var(--yellow);
       padding: 0 32px;
       height: 60px;
       display: flex;
@@ -46,7 +48,7 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
     }
     .logo {
       display: flex;
@@ -56,29 +58,30 @@
     .logo-icon {
       width: 32px;
       height: 32px;
-      background: var(--crimson);
+      background: #1a1a1a;
       border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-    .logo-icon svg { width: 18px; height: 18px; fill: white; }
+    .logo-icon svg { width: 18px; height: 18px; fill: var(--yellow); }
     .logo-text {
       font-family: 'Playfair Display', serif;
       font-size: 18px;
-      color: white;
+      color: #1a1a1a;
       letter-spacing: 0.5px;
     }
     .logo-sub {
       font-size: 11px;
-      color: rgba(255,255,255,0.5);
+      color: rgba(0,0,0,0.5);
       font-weight: 300;
       letter-spacing: 1px;
     }
     .header-badge {
       font-size: 12px;
-      color: rgba(255,255,255,0.6);
+      color: rgba(0,0,0,0.6);
       letter-spacing: 0.5px;
+      font-weight: 600;
     }
 
     /* ── LAYOUT ── */
@@ -150,8 +153,8 @@
       cursor: pointer;
     }
     select:focus, input[type="text"]:focus {
-      border-color: var(--crimson);
-      box-shadow: 0 0 0 3px rgba(200,16,46,0.1);
+      border-color: var(--yellow);
+      box-shadow: 0 0 0 3px rgba(255,199,44,0.2);
     }
 
     .search-input-wrap {
@@ -172,20 +175,20 @@
       width: 100%;
       margin-top: 4px;
       padding: 11px;
-      background: var(--crimson);
-      color: white;
+      background: var(--yellow);
+      color: #1a1a1a;
       border: none;
       border-radius: 8px;
       font-family: 'Noto Sans KR', sans-serif;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       transition: background 0.2s, transform 0.1s;
       letter-spacing: 0.3px;
     }
-    .search-btn:hover { background: var(--crimson-dark); }
+    .search-btn:hover { background: var(--yellow-dark); }
     .search-btn:active { transform: scale(0.99); }
-    .search-btn:disabled { background: #ccc; cursor: not-allowed; }
+    .search-btn:disabled { background: #ccc; color: #888; cursor: not-allowed; }
 
     /* ── RESULTS LIST ── */
     .results-header {
@@ -220,12 +223,12 @@
       gap: 12px;
       align-items: flex-start;
     }
-    .hotel-item:hover { background: var(--crimson-light); }
+    .hotel-item:hover { background: #fff8e6; }
     .hotel-item.active {
-      background: var(--crimson-light);
-      border-left: 3px solid var(--crimson);
+      background: #fff8e6;
+      border-left: 3px solid var(--yellow);
     }
-    .hotel-item.active .hotel-item-name { color: var(--crimson); }
+    .hotel-item.active .hotel-item-name { color: #b8860b; }
 
     .hotel-thumb {
       width: 56px;
@@ -272,11 +275,11 @@
     .stars-mini {
       display: flex;
       gap: 1px;
+      align-items: center;
     }
-    .stars-mini span {
-      font-size: 9px;
-      color: var(--gold);
-    }
+    .stars-mini .star-full { font-size: 9px; color: var(--gold); }
+    .stars-mini .star-half { font-size: 9px; color: var(--gold); opacity: 0.7; }
+    .stars-mini .star-empty { font-size: 9px; color: var(--gold); opacity: 0.2; }
     .hotel-type-badge {
       font-size: 10px;
       color: var(--text-light);
@@ -307,7 +310,7 @@
       width: 28px;
       height: 28px;
       border: 3px solid var(--border);
-      border-top-color: var(--crimson);
+      border-top-color: var(--yellow);
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
     }
@@ -413,8 +416,10 @@
       color: var(--text-sub);
       font-weight: 500;
     }
-    .star-icons { display: flex; gap: 2px; }
-    .star-icons span { font-size: 14px; color: var(--gold); }
+    .star-icons { display: flex; gap: 2px; align-items: center; }
+    .star-icons .star-full { font-size: 14px; color: var(--gold); }
+    .star-icons .star-half { font-size: 14px; color: var(--gold); opacity: 0.65; }
+    .star-icons .star-empty { font-size: 14px; color: var(--gold); opacity: 0.2; }
 
     .review-row {
       display: flex;
@@ -559,17 +564,18 @@
       align-items: center;
       gap: 6px;
       padding: 7px 14px;
-      background: var(--navy);
-      color: white;
+      background: var(--yellow);
+      color: #1a1a1a;
       border: none;
       border-radius: 6px;
       font-size: 12px;
       font-family: 'Noto Sans KR', sans-serif;
+      font-weight: 700;
       cursor: pointer;
       text-decoration: none;
       transition: background 0.2s;
     }
-    .map-btn:hover { background: var(--navy-mid); }
+    .map-btn:hover { background: var(--yellow-dark); }
     .map-btn svg { width: 14px; height: 14px; }
 
     /* ── TOAST ── */
@@ -608,11 +614,11 @@
       <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
     </div>
     <div>
-      <div class="logo-text">HotelSearch</div>
-      <div class="logo-sub">GLOBAL HOTEL DIRECTORY</div>
+      <div class="logo-text">META DB TF</div>
+      <div class="logo-sub">OTA Hotel Information</div>
     </div>
   </div>
-  <div class="header-badge">Powered by DuckDB</div>
+  <div class="header-badge"> </div>
 </header>
 
 <div class="app-body">
@@ -748,14 +754,12 @@
     setListLoading();
 
     try {
-      // 존재하는 parquet 파일 목록을 HEAD 요청으로 확인
       const baseUrl = window.location.href.replace(/\/[^/]*$/, '/');
       const folder = `${baseUrl}parquet1/COUNTRY_CODE=${countryCode}/`;
 
-      // part-00000 ~ part-00019 까지 존재 여부 확인
-	const candidates = Array.from({length: 20}, (_, i) =>
-	  `${folder}part${String(i + 1).padStart(3,'0')}.parquet`
-	);
+      const candidates = Array.from({length: 20}, (_, i) =>
+        `${folder}part${String(i + 1).padStart(3,'0')}.parquet`
+      );
       const checks = await Promise.all(
         candidates.map(url =>
           fetch(url, { method: 'HEAD' })
@@ -777,7 +781,7 @@
         const kw = keyword.toUpperCase().replace(/'/g, "''");
         sql = `
           SELECT HOTEL_CODE, COUNTRY_CODE, COUNTRY_NM, CITY_CODE, HOTEL_TYPE_CODE,
-                 HOTEL_NAME_EN, HOTEL_NAME_KO, HOTEL_NAME_SEARCH, CHAIN_BRAND_NAME_KO,
+                 HOTEL_NAME_EN, HOTEL_NAME_KO, CHAIN_BRAND_NAME_KO,
                  STAR_RATING, HOTEL_ROOM_COUNT, PHONE_NO, ZIP_CODE, DEFAULT_PHOTO_URL,
                  ADDRESS_KO, CHECK_IN_TIME, CHECK_OUT_TIME, LATITUDE, LONGITUDE,
                  FACILITY_LIST, DISTANCE_LIST, HOTEL_INTRO_KO, HOTEL_FACILITY_KO,
@@ -786,14 +790,15 @@
                  COMFORT_AVERAGE, CONDITION_AVERAGE, LOCATION_AVERAGE, NEIGHBORHOOD_AVERAGE,
                  QUALITY_AVERAGE, CLIENT_RECOMMEND_RATE
           FROM read_parquet([${fileList}])
-          WHERE UPPER(HOTEL_NAME_SEARCH) LIKE '%${kw}%'
+          WHERE UPPER(HOTEL_NAME_KO) LIKE '%${kw}%'
+             OR UPPER(HOTEL_NAME_EN) LIKE '%${kw}%'
           ORDER BY ALL_AVERAGE DESC NULLS LAST, HOTEL_NAME_KO
           LIMIT 200
         `;
       } else {
         sql = `
           SELECT HOTEL_CODE, COUNTRY_CODE, COUNTRY_NM, CITY_CODE, HOTEL_TYPE_CODE,
-                 HOTEL_NAME_EN, HOTEL_NAME_KO, HOTEL_NAME_SEARCH, CHAIN_BRAND_NAME_KO,
+                 HOTEL_NAME_EN, HOTEL_NAME_KO, CHAIN_BRAND_NAME_KO,
                  STAR_RATING, HOTEL_ROOM_COUNT, PHONE_NO, ZIP_CODE, DEFAULT_PHOTO_URL,
                  ADDRESS_KO, CHECK_IN_TIME, CHECK_OUT_TIME, LATITUDE, LONGITUDE,
                  FACILITY_LIST, DISTANCE_LIST, HOTEL_INTRO_KO, HOTEL_FACILITY_KO,
@@ -860,14 +865,30 @@
     }).join('');
   }
 
+  // ── 실수형 별점 렌더 (0.5 단위 지원) ──
   function renderStarsMini(n) {
-    const count = parseInt(n) || 0;
-    return Array(Math.min(count, 5)).fill('<span>★</span>').join('');
+    const val = parseFloat(n) || 0;
+    const full = Math.floor(val);
+    const half = (val - full) >= 0.5;
+    const empty = 5 - full - (half ? 1 : 0);
+    return Array(Math.min(full, 5)).fill('<span class="star-full">★</span>').join('')
+      + (half ? '<span class="star-half">½</span>' : '')
+      + Array(Math.max(empty, 0)).fill('<span class="star-empty">★</span>').join('');
+  }
+
+  // ── 실수형 별점 렌더 (상세 - 큰 아이콘) ──
+  function renderStarsDetail(n) {
+    const val = parseFloat(n) || 0;
+    const full = Math.floor(val);
+    const half = (val - full) >= 0.5;
+    const empty = 5 - full - (half ? 1 : 0);
+    return Array(Math.min(full, 5)).fill('<span class="star-full">★</span>').join('')
+      + (half ? '<span class="star-half">½</span>' : '')
+      + Array(Math.max(empty, 0)).fill('<span class="star-empty">★</span>').join('');
   }
 
   // ── SELECT HOTEL ──
   window.selectHotel = function(idx) {
-    // Remove active from previous
     document.querySelectorAll('.hotel-item').forEach(el => el.classList.remove('active'));
     const el = document.getElementById('hi-' + idx);
     if (el) { el.classList.add('active'); el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
@@ -880,8 +901,13 @@
   function renderDetail(h) {
     const panel = document.getElementById('rightPanel');
 
-    const starCount = parseInt(h.STAR_RATING) || 0;
-    const starIcons = Array(Math.min(starCount, 5)).fill('<span>★</span>').join('');
+    const starVal = parseFloat(h.STAR_RATING) || 0;
+    const starIcons = renderStarsDetail(starVal);
+    // 성급 표시: 정수면 "3성급", 소수점이면 "3.5성급"
+    const starLabel = starVal > 0
+      ? (Number.isInteger(starVal) ? `${starVal}성급` : `${starVal}성급`)
+      : '';
+
     const score = h.ALL_AVERAGE ? parseFloat(h.ALL_AVERAGE).toFixed(1) : null;
     const reviewCount = h.REVIEW_COUNT ? parseInt(h.REVIEW_COUNT).toLocaleString() : null;
 
@@ -949,9 +975,9 @@
               ${h.HOTEL_NAME_EN ? `<span class="detail-hotel-name-en">${h.HOTEL_NAME_EN}</span>` : ''}
             </div>
             <div class="detail-rating-box">
-              ${starCount ? `<div class="star-row">
+              ${starVal ? `<div class="star-row">
                 <div class="star-icons">${starIcons}</div>
-                <span class="star-count">${starCount}성급</span>
+                <span class="star-count">${starLabel}</span>
               </div>` : ''}
               ${score ? `<div class="review-row">
                 <span class="review-score">★ ${score}</span>
