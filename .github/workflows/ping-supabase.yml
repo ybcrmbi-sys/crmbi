@@ -1,0 +1,43 @@
+name: Ping Supabase to Prevent Pausing
+
+on:
+  schedule:
+    - cron: '0 0 * * 1,4'  # 매주 월요일, 목요일 UTC 00:00 실행
+  workflow_dispatch:         # 수동 실행 버튼도 활성화
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Supabase Client
+        run: npm install @supabase/supabase-js --force
+
+      - name: Ping Supabase DB
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
+          node -e "
+            const { createClient } = require('@supabase/supabase-js');
+            const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+            supabase
+              .from('keep_alive')
+              .select('id')
+              .limit(1)
+              .then(({ data, error }) => {
+                if (error) {
+                  console.error('Ping failed:', error.message);
+                  process.exit(1);
+                }
+                console.log('Ping successful! DB is alive.');
+              });
+          "
