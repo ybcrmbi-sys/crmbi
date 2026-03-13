@@ -1,12 +1,23 @@
 {
-  "outputDirectory": ".",
+  "version": 2,
+  "builds": [
+    {
+      "src": "**/*",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
   "headers": [
     {
       "source": "/parquet1/(.*)",
       "headers": [
         { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET, HEAD, OPTIONS" },
-        { "key": "Content-Type", "value": "application/octet-stream" }
+        { "key": "Access-Control-Allow-Methods", "value": "GET, HEAD, OPTIONS" }
       ]
     }
   ]
