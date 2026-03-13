@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>호텔 정보 검색</title>
+  <title>OTA 호텔 정보 검색</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
   <style>
@@ -22,6 +22,8 @@
       --text-sub: #5a5a5a;
       --text-light: #999;
       --white: #ffffff;
+      --yellow: #FFC72C;
+      --yellow-dark: #e6b000;
       --shadow: 0 2px 16px rgba(0,0,0,0.08);
       --shadow-hover: 0 6px 28px rgba(0,0,0,0.14);
     }
@@ -37,7 +39,7 @@
 
     /* ── HEADER ── */
     header {
-      background: var(--navy);
+      background: var(--yellow);
       padding: 0 32px;
       height: 60px;
       display: flex;
@@ -46,7 +48,7 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
     }
     .logo {
       display: flex;
@@ -56,29 +58,30 @@
     .logo-icon {
       width: 32px;
       height: 32px;
-      background: var(--crimson);
+      background: #1a1a1a;
       border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-    .logo-icon svg { width: 18px; height: 18px; fill: white; }
+    .logo-icon svg { width: 18px; height: 18px; fill: var(--yellow); }
     .logo-text {
       font-family: 'Playfair Display', serif;
       font-size: 18px;
-      color: white;
+      color: #1a1a1a;
       letter-spacing: 0.5px;
     }
     .logo-sub {
       font-size: 11px;
-      color: rgba(255,255,255,0.5);
+      color: rgba(0,0,0,0.5);
       font-weight: 300;
       letter-spacing: 1px;
     }
     .header-badge {
       font-size: 12px;
-      color: rgba(255,255,255,0.6);
+      color: rgba(0,0,0,0.6);
       letter-spacing: 0.5px;
+      font-weight: 600;
     }
 
     /* ── LAYOUT ── */
@@ -150,8 +153,8 @@
       cursor: pointer;
     }
     select:focus, input[type="text"]:focus {
-      border-color: var(--crimson);
-      box-shadow: 0 0 0 3px rgba(200,16,46,0.1);
+      border-color: var(--yellow);
+      box-shadow: 0 0 0 3px rgba(255,199,44,0.2);
     }
 
     .search-input-wrap {
@@ -172,20 +175,20 @@
       width: 100%;
       margin-top: 4px;
       padding: 11px;
-      background: var(--crimson);
-      color: white;
+      background: var(--yellow);
+      color: #1a1a1a;
       border: none;
       border-radius: 8px;
       font-family: 'Noto Sans KR', sans-serif;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       transition: background 0.2s, transform 0.1s;
       letter-spacing: 0.3px;
     }
-    .search-btn:hover { background: var(--crimson-dark); }
+    .search-btn:hover { background: var(--yellow-dark); }
     .search-btn:active { transform: scale(0.99); }
-    .search-btn:disabled { background: #ccc; cursor: not-allowed; }
+    .search-btn:disabled { background: #ccc; color: #888; cursor: not-allowed; }
 
     /* ── RESULTS LIST ── */
     .results-header {
@@ -220,12 +223,12 @@
       gap: 12px;
       align-items: flex-start;
     }
-    .hotel-item:hover { background: var(--crimson-light); }
+    .hotel-item:hover { background: #fff8e6; }
     .hotel-item.active {
-      background: var(--crimson-light);
-      border-left: 3px solid var(--crimson);
+      background: #fff8e6;
+      border-left: 3px solid var(--yellow);
     }
-    .hotel-item.active .hotel-item-name { color: var(--crimson); }
+    .hotel-item.active .hotel-item-name { color: #b8860b; }
 
     .hotel-thumb {
       width: 56px;
@@ -272,11 +275,11 @@
     .stars-mini {
       display: flex;
       gap: 1px;
+      align-items: center;
     }
-    .stars-mini span {
-      font-size: 9px;
-      color: var(--gold);
-    }
+    .stars-mini .star-full { font-size: 9px; color: var(--gold); }
+    .stars-mini .star-half { font-size: 9px; color: var(--gold); opacity: 0.7; }
+    .stars-mini .star-empty { font-size: 9px; color: var(--gold); opacity: 0.2; }
     .hotel-type-badge {
       font-size: 10px;
       color: var(--text-light);
@@ -307,7 +310,7 @@
       width: 28px;
       height: 28px;
       border: 3px solid var(--border);
-      border-top-color: var(--crimson);
+      border-top-color: var(--yellow);
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
     }
@@ -348,13 +351,13 @@
     }
 
     .photo-gallery {
-      display: grid;
-      grid-template-columns: 2fr 1fr 1fr;
-      gap: 3px;
       height: 220px;
+      overflow: hidden;
     }
     .photo-gallery .main-photo {
-      grid-row: 1 / 3;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
     }
     .gallery-img {
       width: 100%;
@@ -371,6 +374,7 @@
       justify-content: center;
       color: var(--text-light);
       font-size: 12px;
+      overflow: hidden;
     }
 
     .detail-title-area {
@@ -409,12 +413,22 @@
       gap: 4px;
     }
     .star-count {
-      font-size: 12px;
-      color: var(--text-sub);
-      font-weight: 500;
+      font-size: 16px;
+      color: var(--text-main);
+      font-weight: 700;
+      letter-spacing: -0.3px;
     }
-    .star-icons { display: flex; gap: 2px; }
-    .star-icons span { font-size: 14px; color: var(--gold); }
+    .star-icons { display: flex; gap: 3px; align-items: center; }
+    .star-icons .star-full { font-size: 22px; color: var(--gold); }
+    .star-icons .star-half { font-size: 22px; color: var(--gold); opacity: 0.65; }
+    .star-icons .star-empty { font-size: 22px; color: var(--gold); opacity: 0.2; }
+
+    /* ── STAR COPY BUTTON ── */
+    .star-copy-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
 
     .review-row {
       display: flex;
@@ -472,7 +486,84 @@
       font-size: 12px;
       font-weight: 500;
     }
-    .info-val { color: var(--text-main); flex: 1; }
+    .info-val {
+      color: var(--text-main);
+      flex: 1;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+    .info-val-text { flex: 1; }
+
+    /* ── COPY BUTTON ── */
+    .copy-btn {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--warm-gray);
+      color: var(--text-light);
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.15s, background 0.15s, color 0.15s, border-color 0.15s;
+      vertical-align: middle;
+      padding: 0;
+    }
+    .copy-btn svg { width: 11px; height: 11px; display: block; pointer-events: none; }
+    .copy-btn:hover { background: var(--yellow); border-color: var(--yellow-dark); color: #1a1a1a; }
+    .copy-btn.copied { background: #d4edda; border-color: #5cb85c; color: #3a7a3a; opacity: 1 !important; }
+
+    .info-row:hover .copy-btn,
+    .copy-block:hover .copy-btn,
+    .detail-title-area:hover .copy-btn-inline { opacity: 1; }
+
+    /* 블록형 복사 버튼 (소개글 등) */
+    .copy-block {
+      position: relative;
+    }
+    .copy-block-btn-wrap {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 8px;
+    }
+    .copy-block .copy-btn {
+      opacity: 0;
+      width: auto;
+      height: auto;
+      padding: 3px 8px;
+      gap: 4px;
+      font-size: 11px;
+      font-family: 'Noto Sans KR', sans-serif;
+      font-weight: 500;
+    }
+    .copy-block .copy-btn svg { width: 11px; height: 11px; }
+
+    /* 주소/이름 인라인 버튼 */
+    .copy-btn-inline {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border: 1px solid rgba(0,0,0,0.15);
+      border-radius: 4px;
+      background: rgba(255,255,255,0.6);
+      color: var(--text-light);
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.15s, background 0.15s;
+      margin-left: 4px;
+      vertical-align: middle;
+      padding: 0;
+    }
+    .copy-btn-inline svg { width: 11px; height: 11px; pointer-events: none; }
+    .copy-btn-inline:hover { background: var(--yellow); color: #1a1a1a; border-color: var(--yellow-dark); }
+    .copy-btn-inline.copied { background: #d4edda; border-color: #5cb85c; color: #3a7a3a; opacity: 1 !important; }
 
     .intro-text {
       font-size: 13px;
@@ -559,17 +650,18 @@
       align-items: center;
       gap: 6px;
       padding: 7px 14px;
-      background: var(--navy);
-      color: white;
+      background: var(--yellow);
+      color: #1a1a1a;
       border: none;
       border-radius: 6px;
       font-size: 12px;
       font-family: 'Noto Sans KR', sans-serif;
+      font-weight: 700;
       cursor: pointer;
       text-decoration: none;
       transition: background 0.2s;
     }
-    .map-btn:hover { background: var(--navy-mid); }
+    .map-btn:hover { background: var(--yellow-dark); }
     .map-btn svg { width: 14px; height: 14px; }
 
     /* ── TOAST ── */
@@ -608,11 +700,11 @@
       <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
     </div>
     <div>
-      <div class="logo-text">HotelSearch</div>
-      <div class="logo-sub">GLOBAL HOTEL DIRECTORY</div>
+      <div class="logo-text">YBTOUR META DB TF</div>
+      <div class="logo-sub">OTA HOTEL DIRECTORY</div>
     </div>
   </div>
-  <div class="header-badge">Powered by DuckDB</div>
+  <div class="header-badge">YBTOUR</div>
 </header>
 
 <div class="app-body">
@@ -748,13 +840,11 @@
     setListLoading();
 
     try {
-      // 존재하는 parquet 파일 목록을 HEAD 요청으로 확인
       const baseUrl = window.location.href.replace(/\/[^/]*$/, '/');
       const folder = `${baseUrl}parquet1/COUNTRY_CODE=${countryCode}/`;
 
-      // part-00000 ~ part-00019 까지 존재 여부 확인
       const candidates = Array.from({length: 20}, (_, i) =>
-        `${folder}part-${String(i).padStart(5,'0')}.parquet`
+        `${folder}part${String(i + 1).padStart(3,'0')}.parquet`
       );
       const checks = await Promise.all(
         candidates.map(url =>
@@ -777,7 +867,7 @@
         const kw = keyword.toUpperCase().replace(/'/g, "''");
         sql = `
           SELECT HOTEL_CODE, COUNTRY_CODE, COUNTRY_NM, CITY_CODE, HOTEL_TYPE_CODE,
-                 HOTEL_NAME_EN, HOTEL_NAME_KO, HOTEL_NAME_SEARCH, CHAIN_BRAND_NAME_KO,
+                 HOTEL_NAME_EN, HOTEL_NAME_KO, CHAIN_BRAND_NAME_KO,
                  STAR_RATING, HOTEL_ROOM_COUNT, PHONE_NO, ZIP_CODE, DEFAULT_PHOTO_URL,
                  ADDRESS_KO, CHECK_IN_TIME, CHECK_OUT_TIME, LATITUDE, LONGITUDE,
                  FACILITY_LIST, DISTANCE_LIST, HOTEL_INTRO_KO, HOTEL_FACILITY_KO,
@@ -786,14 +876,15 @@
                  COMFORT_AVERAGE, CONDITION_AVERAGE, LOCATION_AVERAGE, NEIGHBORHOOD_AVERAGE,
                  QUALITY_AVERAGE, CLIENT_RECOMMEND_RATE
           FROM read_parquet([${fileList}])
-          WHERE UPPER(HOTEL_NAME_SEARCH) LIKE '%${kw}%'
+          WHERE UPPER(HOTEL_NAME_KO) LIKE '%${kw}%'
+             OR UPPER(HOTEL_NAME_EN) LIKE '%${kw}%'
           ORDER BY ALL_AVERAGE DESC NULLS LAST, HOTEL_NAME_KO
           LIMIT 200
         `;
       } else {
         sql = `
           SELECT HOTEL_CODE, COUNTRY_CODE, COUNTRY_NM, CITY_CODE, HOTEL_TYPE_CODE,
-                 HOTEL_NAME_EN, HOTEL_NAME_KO, HOTEL_NAME_SEARCH, CHAIN_BRAND_NAME_KO,
+                 HOTEL_NAME_EN, HOTEL_NAME_KO, CHAIN_BRAND_NAME_KO,
                  STAR_RATING, HOTEL_ROOM_COUNT, PHONE_NO, ZIP_CODE, DEFAULT_PHOTO_URL,
                  ADDRESS_KO, CHECK_IN_TIME, CHECK_OUT_TIME, LATITUDE, LONGITUDE,
                  FACILITY_LIST, DISTANCE_LIST, HOTEL_INTRO_KO, HOTEL_FACILITY_KO,
@@ -860,14 +951,30 @@
     }).join('');
   }
 
+  // ── 실수형 별점 렌더 (0.5 단위 지원) ──
   function renderStarsMini(n) {
-    const count = parseInt(n) || 0;
-    return Array(Math.min(count, 5)).fill('<span>★</span>').join('');
+    const val = parseFloat(n) || 0;
+    const full = Math.floor(val);
+    const half = (val - full) >= 0.5;
+    const empty = 5 - full - (half ? 1 : 0);
+    return Array(Math.min(full, 5)).fill('<span class="star-full">★</span>').join('')
+      + (half ? '<span class="star-half">½</span>' : '')
+      + Array(Math.max(empty, 0)).fill('<span class="star-empty">★</span>').join('');
+  }
+
+  // ── 실수형 별점 렌더 (상세 - 큰 아이콘) ──
+  function renderStarsDetail(n) {
+    const val = parseFloat(n) || 0;
+    const full = Math.floor(val);
+    const half = (val - full) >= 0.5;
+    const empty = 5 - full - (half ? 1 : 0);
+    return Array(Math.min(full, 5)).fill('<span class="star-full">★</span>').join('')
+      + (half ? '<span class="star-half">½</span>' : '')
+      + Array(Math.max(empty, 0)).fill('<span class="star-empty">★</span>').join('');
   }
 
   // ── SELECT HOTEL ──
   window.selectHotel = function(idx) {
-    // Remove active from previous
     document.querySelectorAll('.hotel-item').forEach(el => el.classList.remove('active'));
     const el = document.getElementById('hi-' + idx);
     if (el) { el.classList.add('active'); el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
@@ -880,8 +987,13 @@
   function renderDetail(h) {
     const panel = document.getElementById('rightPanel');
 
-    const starCount = parseInt(h.STAR_RATING) || 0;
-    const starIcons = Array(Math.min(starCount, 5)).fill('<span>★</span>').join('');
+    const starVal = parseFloat(h.STAR_RATING) || 0;
+    const starIcons = renderStarsDetail(starVal);
+    // 성급 표시: 정수면 "3성급", 소수점이면 "3.5성급"
+    const starLabel = starVal > 0
+      ? (Number.isInteger(starVal) ? `${starVal}성급` : `${starVal}성급`)
+      : '';
+
     const score = h.ALL_AVERAGE ? parseFloat(h.ALL_AVERAGE).toFixed(1) : null;
     const reviewCount = h.REVIEW_COUNT ? parseInt(h.REVIEW_COUNT).toLocaleString() : null;
 
@@ -934,12 +1046,6 @@
       <div class="detail-header">
         <div class="photo-gallery">
           <div class="main-photo">${mainPhoto}</div>
-          <div class="gallery-placeholder" style="background:linear-gradient(135deg,#1a234015,#c8102e10)">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-          </div>
-          <div class="gallery-placeholder" style="background:linear-gradient(135deg,#c8102e10,#1a234015)">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-          </div>
         </div>
 
         <div class="detail-title-area">
@@ -947,21 +1053,25 @@
             <div>
               <span class="detail-hotel-name">${h.HOTEL_NAME_KO || h.HOTEL_NAME_EN || '-'}</span>
               ${h.HOTEL_NAME_EN ? `<span class="detail-hotel-name-en">${h.HOTEL_NAME_EN}</span>` : ''}
+              <button class="copy-btn-inline" onclick="copyToClipboard(this,'${((h.HOTEL_NAME_KO||h.HOTEL_NAME_EN||'')+' '+(h.HOTEL_NAME_EN||'')).trim().replace(/'/g,"&#39;")}')" title="이름 복사">${COPY_ICON}</button>
             </div>
             <div class="detail-rating-box">
-              ${starCount ? `<div class="star-row">
-                <div class="star-icons">${starIcons}</div>
-                <span class="star-count">${starCount}성급</span>
-              </div>` : ''}
-              ${score ? `<div class="review-row">
-                <span class="review-score">★ ${score}</span>
-                ${reviewCount ? `<span class="review-text">(리뷰 ${reviewCount}개)</span>` : ''}
+              ${starVal ? `<div class="star-row">
+                <div class="star-copy-wrap">
+                  <div class="star-icons">${starIcons}</div>
+                  <span class="star-count">${starLabel}</span>
+                  <button class="copy-btn-inline" style="opacity:1;width:22px;height:22px;" onclick="copyToClipboard(this,'${starLabel}')" title="성급 복사">${COPY_ICON}</button>
+                </div>
               </div>` : ''}
             </div>
           </div>
           <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:8px;">
-            ${h.ADDRESS_KO && h.ADDRESS_KO !== 'None' ? `<span style="font-size:12px;color:var(--text-sub)">📍 ${h.ADDRESS_KO}</span>` : ''}
+            ${h.ADDRESS_KO && h.ADDRESS_KO !== 'None' ? `<span style="font-size:12px;color:var(--text-sub);display:inline-flex;align-items:center;gap:4px;">📍 ${h.ADDRESS_KO}<button class="copy-btn-inline" onclick="copyToClipboard(this,'${h.ADDRESS_KO.replace(/'/g,"&#39;")}')" title="주소 복사">${COPY_ICON}</button></span>` : ''}
             ${mapsLink}
+            ${score ? `<div class="review-row">
+              <span class="review-score">★ ${score}</span>
+              ${reviewCount ? `<span class="review-text">(리뷰 ${reviewCount}개)</span>` : ''}
+            </div>` : ''}
           </div>
         </div>
       </div>
@@ -993,14 +1103,29 @@
               <div class="checkin-time">${h.CHECK_OUT_TIME && h.CHECK_OUT_TIME !== 'None' && h.CHECK_OUT_TIME !== '[NULL]' ? h.CHECK_OUT_TIME : '-'}</div>
             </div>
           </div>
-          ${h.HOTEL_CAUTION_KO && h.HOTEL_CAUTION_KO !== 'None' && h.HOTEL_CAUTION_KO !== '[NULL]'
-            ? `<div style="margin-top:14px;"><div class="info-card-title" style="margin-bottom:8px;">주의사항</div><p class="intro-text" style="font-size:12px;">${h.HOTEL_CAUTION_KO.replace(/<[^>]+>/g,'').trim().substring(0,300)}${h.HOTEL_CAUTION_KO.length > 300 ? '...' : ''}</p></div>`
-            : ''}
         </div>
 
+        <!-- 주의사항 (별도 카드) -->
+        ${h.HOTEL_CAUTION_KO && h.HOTEL_CAUTION_KO !== 'None' && h.HOTEL_CAUTION_KO !== '[NULL]'
+          ? (() => {
+              const cautionText = h.HOTEL_CAUTION_KO.replace(/<[^>]+>/g,'').trim();
+              const cautionEsc = cautionText.replace(/'/g,"&#39;").replace(/"/g,'&quot;');
+              return `<div class="info-card full copy-block">
+                <div class="info-card-title" style="display:flex;align-items:center;justify-content:space-between;">
+                  주의사항
+                  <button class="copy-btn" style="opacity:1;width:auto;height:auto;padding:3px 8px;gap:4px;font-size:11px;font-family:inherit;font-weight:500;" onclick="copyToClipboard(this,'${cautionEsc}')" title="복사">${COPY_ICON} 복사</button>
+                </div>
+                <p class="intro-text" style="font-size:13px;">${cautionText}</p>
+              </div>`;
+            })()
+          : ''}
+
         <!-- 호텔 소개 -->
-        ${introText ? `<div class="info-card full">
-          <div class="info-card-title">호텔 소개</div>
+        ${introText ? `<div class="info-card full copy-block">
+          <div class="info-card-title" style="display:flex;align-items:center;justify-content:space-between;">
+            호텔 소개
+            ${copyBlockBtn(introText, true)}
+          </div>
           <p class="intro-text">${introText}</p>
         </div>` : ''}
 
@@ -1018,29 +1143,75 @@
         </div>` : ''}
 
         <!-- 호텔 시설 안내 -->
-        ${h.HOTEL_FACILITY_KO && h.HOTEL_FACILITY_KO !== 'None' && h.HOTEL_FACILITY_KO !== '[NULL]' ? `<div class="info-card full">
-          <div class="info-card-title">호텔 시설 안내</div>
+        ${h.HOTEL_FACILITY_KO && h.HOTEL_FACILITY_KO !== 'None' && h.HOTEL_FACILITY_KO !== '[NULL]' ? `<div class="info-card full copy-block">
+          <div class="info-card-title" style="display:flex;align-items:center;justify-content:space-between;">
+            호텔 시설 안내
+            ${copyBlockBtn(h.HOTEL_FACILITY_KO.replace(/<[^>]+>/g,'').trim(), true)}
+          </div>
           <p class="intro-text">${h.HOTEL_FACILITY_KO.replace(/<[^>]+>/g,'').trim()}</p>
         </div>` : ''}
 
         <!-- 객실 시설 -->
-        ${h.ROOM_FACILITY_KO && h.ROOM_FACILITY_KO !== 'None' && h.ROOM_FACILITY_KO !== '[NULL]' ? `<div class="info-card full">
-          <div class="info-card-title">객실 시설</div>
+        ${h.ROOM_FACILITY_KO && h.ROOM_FACILITY_KO !== 'None' && h.ROOM_FACILITY_KO !== '[NULL]' ? `<div class="info-card full copy-block">
+          <div class="info-card-title" style="display:flex;align-items:center;justify-content:space-between;">
+            객실 시설
+            ${copyBlockBtn(h.ROOM_FACILITY_KO.replace(/<[^>]+>/g,'').trim(), true)}
+          </div>
           <p class="intro-text">${h.ROOM_FACILITY_KO.replace(/<[^>]+>/g,'').trim()}</p>
         </div>` : ''}
 
         <!-- 주변 정보 -->
-        ${h.HOTEL_ATTRACTION_KO && h.HOTEL_ATTRACTION_KO !== 'None' && h.HOTEL_ATTRACTION_KO !== '[NULL]' ? `<div class="info-card full">
-          <div class="info-card-title">주변 관광 명소</div>
+        ${h.HOTEL_ATTRACTION_KO && h.HOTEL_ATTRACTION_KO !== 'None' && h.HOTEL_ATTRACTION_KO !== '[NULL]' ? `<div class="info-card full copy-block">
+          <div class="info-card-title" style="display:flex;align-items:center;justify-content:space-between;">
+            주변 관광 명소
+            ${copyBlockBtn(h.HOTEL_ATTRACTION_KO.replace(/<br\s*\/?>/gi,'\n').replace(/<[^>]+>/g,'').trim(), true)}
+          </div>
           <p class="intro-text" style="white-space:pre-line">${h.HOTEL_ATTRACTION_KO.replace(/<br\s*\/?>/gi,'\n').replace(/<[^>]+>/g,'').trim()}</p>
         </div>` : ''}
       </div>
     </div>`;
   }
 
+  // ── COPY SVG ICON ──
+  const COPY_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>`;
+  const CHECK_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`;
+
+  // ── COPY TO CLIPBOARD ──
+  window.copyToClipboard = function(btn, text) {
+    navigator.clipboard.writeText(text).then(() => {
+      btn.innerHTML = CHECK_ICON;
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.innerHTML = COPY_ICON;
+        btn.classList.remove('copied');
+      }, 1500);
+    }).catch(() => showToast('복사 실패'));
+  };
+
   function row(label, val) {
     if (!val || val === 'None' || val === '[NULL]' || val === 'null') return '';
-    return `<div class="info-row"><span class="info-key">${label}</span><span class="info-val">${val}</span></div>`;
+    const escaped = val.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    return `<div class="info-row">
+      <span class="info-key">${label}</span>
+      <span class="info-val">
+        <span class="info-val-text">${val}</span>
+        <button class="copy-btn" onclick="copyToClipboard(this,'${escaped}')" title="복사">${COPY_ICON}</button>
+      </span>
+    </div>`;
+  }
+
+  // ── COPY BLOCK: 긴 텍스트 블록용 ──
+  function copyBlockBtn(text, inline = false) {
+    const escaped = text.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    const btnStyle = `opacity:1;width:auto;height:auto;padding:3px 8px;gap:4px;font-size:11px;font-family:inherit;font-weight:500;`;
+    if (inline) {
+      return `<button class="copy-btn" style="${btnStyle}" onclick="copyToClipboard(this,'${escaped}')" title="복사">${COPY_ICON} 복사</button>`;
+    }
+    return `<div class="copy-block-btn-wrap">
+      <button class="copy-btn" style="${btnStyle}" onclick="copyToClipboard(this,'${escaped}')" title="전체 복사">
+        ${COPY_ICON} 복사
+      </button>
+    </div>`;
   }
 
   function setListLoading() {
