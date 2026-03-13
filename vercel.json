@@ -4,7 +4,8 @@
       "source": "/parquet1/(.*)",
       "headers": [
         { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET, HEAD, OPTIONS" }
+        { "key": "Access-Control-Allow-Methods", "value": "GET, HEAD, OPTIONS" },
+        { "key": "Content-Type", "value": "application/octet-stream" }
       ]
     }
   ]
